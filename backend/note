@@ -1,3 +1,12 @@
-npm init -y                         --> tạo file package.json
-npm i express cors mongoose dotenv
-npm i -D nodemon                    --> tự động restart server khi có sự thay đổi một số loại file, -D là lưu vào loại Dev-dependencies để khi deploy nó ko tải pakage này
+pakage install:
+    npm init -y                             --> tạo file package.json
+    npm i express cors mongoose dotenv
+    npm i -D nodemon                        --> tự động restart server khi có sự thay đổi một số loại file, -D là lưu vào loại Dev-dependencies để khi deploy nó ko tải pakage này
+    npm i jsonwebtoken bcrypt cookie-parser --> tạo và xác thực token, mã há mk, đọc cookie từ req
+
+Đặc tả thư mục:
+    controllers --> phần sử lý logic các tính năng
+    routes --> định nghĩa các đường dẫn API
+    middleware --> phần xử lý các chức năng trung gian giữa req và res (như xác thực, phân quyền, ...)
+    libs --> nơi để các hàm tiện ích và thư viện
+    models --> định nghĩa các mô hình dữ liệu (schema) cho MongoDB
