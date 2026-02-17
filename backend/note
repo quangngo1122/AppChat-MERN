@@ -1,0 +1,3 @@
+npm init -y                         --> tạo file package.json
+npm i express cors mongoose dotenv
+npm i -D nodemon                    --> tự động restart server khi có sự thay đổi một số loại file, -D là lưu vào loại Dev-dependencies để khi deploy nó ko tải pakage này
