@@ -1,16 +1,11 @@
 npm create vite@latest . --> tao du an ngay duong dan hien tai
-npm i react-router axios lucide-react 
-    tailwindcss @tailwindcss/vite tailwindcss-animate 
-        zustand zod react-hook-form @hookform/resolvers sonner
-            --> các thư viện cần thiết (react-router: để điều hướng giữa các trang, axios: gọi api,
-                lucide-react: gọi icon, zustan:quản lý state, zod:kiểm tra kdl khi điền form,sonner:hiển thị thông báo )
+npm i react-router axios lucide-react tailwindcss @tailwindcss/vite tailwindcss-animate zustand zod react-hook-form @hookform/resolvers sonner
+---- --> các thư viện cần thiết (react-router: để điều hướng giữa các ---- trang, axios: gọi api, lucide-react: gọi icon, zustan:quản lý
+--- state, zod:kiểm tra kdl khi điền form,sonner:hiển thị thông báo )
 
 npm i -D @types/node --> giúp TS hiểu kdl của nodejs
 npx shadcn@latest add signup-04 --> tạo giao diện đăng ký bằng shadcn
 
+---
 
-
-
-
-***
 https://ui.shadcn.com/blocks --> layout có sẵn của shadcn, có thể dùng để tạo giao diện nhanh chóng

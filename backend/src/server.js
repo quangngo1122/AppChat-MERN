@@ -7,6 +7,7 @@ import authRoute from "./routes/authRoute.js";
 import cookieParser from "cookie-parser";
 import userRoute from "./routes/userRoute.js";
 import { protectedRoute } from "./middleware/authMiddleware.js";
+import cors from "cors";
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -14,6 +15,7 @@ const PORT = process.env.PORT || 5001;
 // middleware
 app.use(express.json()); // giup hiểu và đọc req body dưới dạng json
 app.use(cookieParser());
+app.use(cors({ origin: process.env.CLIENT_URL, credentials: true })); // credentials: true --> Cho phép gửi: Cookie, HTTP-only cookie , Authorization header ,Session
 
 //public routes
 app.use("/api/auth", authRoute);

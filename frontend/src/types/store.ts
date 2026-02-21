@@ -1,0 +1,21 @@
+import type { User } from "./user";
+
+// cấu trúc dữ liệu cho useAuthStore
+export interface AuthState {
+  accessToken: string | null;
+  user: User | null;
+  loading: boolean;
+
+  clearState: () => void; // ko trả về kdl j cả
+
+  signUp: (
+    username: string,
+    password: string,
+    email: string,
+    firstName: string,
+    lastName: string,
+  ) => Promise<void>; // hàm async nên trả về 1 promise (ko kdl), lỗi thì reject
+  signIn: (username: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  fetchMe: () => Promise<void>;
+}
