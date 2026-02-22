@@ -10,6 +10,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   user: null, // thong tin nguoi dung
   loading: false, // theo doi trang thai khi goi api
 
+  setAccessToken: (accessToken) => {
+    set({ accessToken });
+  },
+
   clearState: () => {
     set({ accessToken: null, user: null, loading: false });
   }, // hàm reset giá trị có thể tái sử dụng vd dùng trong logout
@@ -36,7 +40,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       const { accessToken } = await authService.signIn(username, password);
 
-      set({ accessToken }); // = set({ accessToken: accessToken })
+      // set({ accessToken }); // = set({ accessToken: accessToken })
+      get().setAccessToken(accessToken);
 
       await get().fetchMe(); // đăng nhập xong app lấy thông tin người dùng lưu vào store (user)
 
@@ -71,4 +76,22 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({ loading: false });
     }
   },
+  refresh: async () => {
+    try {
+      set({ loading: true });
+      const { user, fetchMe, setAccessToken } = get(); // lấy user, func fetchMe trong tất cả trường lấy đc từ get()
+      const accessToken = await authService.refresh(); // return res.data.accessToken
+      // set({ accessToken: accessToken });
+      setAccessToken(accessToken);
+      if (!user) {
+        await fetchMe();
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
+      get().clearState();
+    } finally {
+      set({ loading: false });
+    }
+  }, // gọi hàm ở protectedroute --> vì nơi này kiểm tra accesstoken có tồn tại ko, nên nếu ko thì gọi hàm này để xử lý
 }));

@@ -4,7 +4,8 @@ import jwt from "jsonwebtoken";
 import Session from "../models/Session.js";
 import crypto from "crypto";
 
-const ACCESS_TOKEN_TTL = "30m"; // thường dưới 15', o localhost này làm 30' cho dể test
+// const ACCESS_TOKEN_TTL = "30m"; // thường dưới 15', o localhost này làm 30' cho dể test
+const ACCESS_TOKEN_TTL = "30s";
 const REFRESH_TOKEN_TTL = 14 * 24 * 60 * 60 * 1000; // 14 ngay
 
 export const signUp = async (req, res) => {
@@ -111,6 +112,41 @@ export const signOut = async (req, res) => {
     return res.sendStatus(204);
   } catch (error) {
     console.log("loi khi goi signOut", error);
+    return res.status(500).json({ message: "loi he thong" });
+  }
+};
+
+// tao accessToken moi tu refresh token
+export const refreshToken = async (req, res) => {
+  try {
+    // lay refreshToken tu cookie
+    const token = req.cookies?.refreshToken;
+    if (!token) {
+      return res.status(401).json({ message: "Token khong ton tai" });
+    }
+    // so sánh refreshT trong db
+    const session = await Session.findOne({ refreshToken: token });
+    if (!session) {
+      return res
+        .status(403)
+        .json({ message: "Token khong hop le hoac da het han" });
+    }
+    // kiểm tra refreshT hết hạn chưa --> nếu time hết hạn < time hiện tại ==> hết hạn
+    if (session.expiresAt < new Date()) {
+      return res.status(403).json({ message: "Token da het han" });
+    }
+    // nếu chưa tạo accesstoken mới
+    const accessToken = jwt.sign(
+      {
+        userId: session.userId,
+      },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: ACCESS_TOKEN_TTL },
+    );
+    // return
+    return res.status(200).json({ accessToken });
+  } catch (error) {
+    console.log("loi khi goi refreshToken", error);
     return res.status(500).json({ message: "loi he thong" });
   }
 };

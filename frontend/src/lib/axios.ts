@@ -26,4 +26,45 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// tự động gọi refresh api khi accessToken hết hạn, phòng ngừa đang use mà nó hết hạn gây ảnh hưởng trải nghiệm
+api.interceptors.response.use(
+  (res) => res, // đúng thì trả về res, sai thì -->
+  async (error) => {
+    const originalResquest = error.config; // cau hinh cua res vua bi loi
+    // nhung api ko can check
+    if (
+      originalResquest.url.includes("/auth/signin") ||
+      originalResquest.url.includes("/auth/signup") ||
+      originalResquest.url.includes("/auth/refresh")
+    ) {
+      return Promise.reject(error); // bỏ qua check mà trả về lỗi luôn
+    }
+
+    // giới hạn số lần thử, giẩ sử accesstoken hết hạn mà chạy hàm này nhưng ko thành công rồi lại thử lại, gây tình trạng gọi liên tục, nên tạo _retryCount giới hạn số lần thử, quá số lần thì người dùng cần đăng nhập lại thay vì thử nữa
+    originalResquest._retryCount = originalResquest._retryCount || 0;
+
+    if (error.response?.status === 403 && originalResquest._retryCount < 4) {
+      originalResquest._retryCount += 1;
+      console.log("refresh", originalResquest._retryCount);
+
+      try {
+        const res = await api.post("/auth/refresh", null, {
+          withCredentials: true,
+        });
+        const newAccessToken = res.data.accessToken;
+        useAuthStore.getState().setAccessToken(newAccessToken);
+
+        originalResquest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+        return api(originalResquest);
+      } catch (refreshError) {
+        useAuthStore.getState().clearState();
+        return Promise.reject(refreshError);
+      }
+    }
+    // neu loi khong phai 403 --> cu reject loi nhu bth
+    return Promise.reject(error);
+  },
+);
+
 export default api;

@@ -6,6 +6,7 @@ export interface AuthState {
   user: User | null;
   loading: boolean;
 
+  setAccessToken: (accessToken: string) => void;
   clearState: () => void; // ko trả về kdl j cả
 
   signUp: (
@@ -18,4 +19,5 @@ export interface AuthState {
   signIn: (username: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   fetchMe: () => Promise<void>;
+  refresh: () => Promise<void>;
 }
