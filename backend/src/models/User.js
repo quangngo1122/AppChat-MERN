@@ -45,6 +45,7 @@ const userSchema = new mongoose.Schema(
   },
 );
 
+//tạo modelUser
 const User = mongoose.model("User", userSchema);
 
 export default User;
