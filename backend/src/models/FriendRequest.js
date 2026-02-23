@@ -1,4 +1,4 @@
-//
+// loi moi ket ban
 
 import mongoose from "mongoose";
 
@@ -30,4 +30,4 @@ friendRequestSchema.index({ from: 1 }); // truy vấn nhanh các lời mời k�
 friendRequestSchema.index({ to: 1 }); // ... đã nhận
 
 const FriendRequest = mongoose.model("FriendRequest", friendRequestSchema);
-return FriendRequest;
+export default FriendRequest;

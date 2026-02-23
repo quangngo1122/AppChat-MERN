@@ -4,8 +4,8 @@ import jwt from "jsonwebtoken";
 import Session from "../models/Session.js";
 import crypto from "crypto";
 
-// const ACCESS_TOKEN_TTL = "30m"; // thường dưới 15', o localhost này làm 30' cho dể test
-const ACCESS_TOKEN_TTL = "30s";
+const ACCESS_TOKEN_TTL = "30m"; // thường dưới 15', o localhost này làm 30' cho dể test
+// const ACCESS_TOKEN_TTL = "30s"; // test
 const REFRESH_TOKEN_TTL = 14 * 24 * 60 * 60 * 1000; // 14 ngay
 
 export const signUp = async (req, res) => {

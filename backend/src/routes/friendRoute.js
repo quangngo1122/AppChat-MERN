@@ -1,0 +1,21 @@
+// "/api/friends"
+
+import express from "express";
+import {
+  acceptFriendRequest,
+  sendFriendRequest,
+  declineFriendRequest,
+  getAllFriends,
+  getFriendRequests,
+} from "../controllers/friendControler.js";
+
+const router = express.Router();
+
+router.post("/requests", sendFriendRequest); // gui yeu cau kb
+router.post("/requests/:requestId/accept", acceptFriendRequest); // chap nhan loi moi, :Dynamic parameters (tham số động)
+router.post("/requests/:requestId/decline", declineFriendRequest); // tu choi loi moi
+
+router.get("/", getAllFriends);
+router.get("/requests", getFriendRequests);
+
+export default router;

@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import userRoute from "./routes/userRoute.js";
 import { protectedRoute } from "./middleware/authMiddleware.js";
 import cors from "cors";
+import friendRoute from "./routes/friendRoute.js";
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -22,6 +23,7 @@ app.use("/api/auth", authRoute);
 // private routes
 app.use(protectedRoute); // để middle ở đây thì api private đc bảo vệ, cách 2 là gắn trực tiếp vào route api (sau đường dẫn và trc hàm api)--> route nào đc gắn thì api đó cần accesstoken mới dùng đc
 app.use("/api/users", userRoute);
+app.use("/api/friends", friendRoute);
 //connect DB
 connectDB().then(() => {
   app.listen(PORT, () => {
