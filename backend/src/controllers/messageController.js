@@ -50,8 +50,29 @@ export const sendDirectMessage = async (req, res) => {
 // gửi tin nhắn nhóm
 export const sendGroupMessage = async (req, res) => {
   try {
+    const { conversationId, content } = req.body;
+    const senderId = req.user._id;
+    const conversation = req.conversation; // từ checkGroupMembership middleware
+
+    if (!content) {
+      return res.status(400).json("Thiếu nội dung");
+    }
+
+    // tạo tin nhắn
+    const message = await Message.create({
+      conversationId,
+      senderId,
+      content,
+    });
+
+    // cap nhat lai thong tin cuoc tro truyen
+    updateConversationAfterCreateMessage(conversation, message, senderId);
+
+    await conversation.save();
+
+    return res.status(201).json({ message });
   } catch (error) {
-    console.error("Loi khi lay danh sach yeu cau ket ban");
+    console.error("Loi xãy ra khi gửi tin nhắn nhóm", error);
     return res.status(500).json({ message: "Lỗi hệ thống" });
   }
 };
