@@ -5,6 +5,8 @@ npm i react-router axios lucide-react tailwindcss @tailwindcss/vite tailwindcss-
 
 npm i -D @types/node --> giúp TS hiểu kdl của nodejs
 npx shadcn@latest add signup-04 --> tạo giao diện đăng ký bằng shadcn
+npx shadcn@latest add sidebar-08 --> siderbar
+npx shadcn@latest add switch badge dialog textarea popover --> component ui shadcn
 
 ---
 

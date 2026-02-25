@@ -21,3 +21,9 @@ export interface AuthState {
   fetchMe: () => Promise<void>;
   refresh: () => Promise<void>;
 }
+
+export interface ThemeState {
+  isDark: boolean;
+  toggleTheme: () => void; // chuyển qua lại sáng tối
+  setTheme: (dark: boolean) => void; // cài theme khi app vừa load
+}
