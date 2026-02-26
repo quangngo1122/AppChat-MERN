@@ -9,8 +9,12 @@ import UnreadCountBadge from "./UnreadCountBadge";
 
 const DirectMessageCard = ({ convo }: { convo: Conversation }) => {
   const { user } = useAuthStore();
-  const { activeConversationId, setActiveConversation, messages } =
-    useChatStore();
+  const {
+    activeConversationId,
+    setActiveConversation,
+    messages,
+    fetchMessages,
+  } = useChatStore();
 
   if (!user) {
     return null;
@@ -30,6 +34,7 @@ const DirectMessageCard = ({ convo }: { convo: Conversation }) => {
     // nếu convo đó chưa có tin nhắn
     if (!messages[id]) {
       // gọi api fetch messages
+      await fetchMessages();
     }
   };
 

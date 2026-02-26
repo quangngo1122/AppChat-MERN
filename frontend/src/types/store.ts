@@ -5,7 +5,9 @@ import type { User } from "./user";
 export interface AuthState {
   accessToken: string | null;
   user: User | null;
-  loading: boolean;
+  convoLoading: boolean;
+
+  messageLoading: boolean;
 
   setAccessToken: (accessToken: string) => void;
   clearState: () => void; // ko trả về kdl j cả
@@ -40,9 +42,13 @@ export interface ChatState {
     }
   >;
   activeConversationId: string | null; // lưu id cuộc trò truyện dang mở
-  loading: boolean;
+  convoLoading: boolean;
+
+  messageLoading: boolean;
+
   reset: () => void;
   setActiveConversation: (id: string | null) => void;
 
   fetchConversation: () => Promise<void>;
+  fetchMessages: (conversations?: string) => Promise<void>;
 }

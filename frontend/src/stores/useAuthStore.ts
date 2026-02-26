@@ -76,7 +76,7 @@ export const useAuthStore = create<AuthState>()(
         try {
           get().clearState();
           await authService.signOut();
-          toast.success("Đăng xuất thành côgn");
+          toast.success("Đăng xuất thành công");
         } catch (error) {
           console.error(error);
           toast.error("Lỗi xãy ra khi đăng xuất! Hãy thử lại!");
