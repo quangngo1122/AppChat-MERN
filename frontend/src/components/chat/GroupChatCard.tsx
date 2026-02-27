@@ -22,7 +22,8 @@ const GroupChatCard = ({ convo }: { convo: Conversation }) => {
   const name = convo.group?.name ?? "";
   const handleSelectConversation = async (id: string) => {
     setActiveConversation(id);
-    if (!messages) {
+    // only fetch when we don't already have messages for this conversation
+    if (!messages[id]) {
       // gọi api fetch messages
       await fetchMessages();
     }

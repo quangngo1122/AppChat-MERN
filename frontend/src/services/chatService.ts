@@ -22,4 +22,34 @@ export const chatService = {
     );
     return { messages: res.data.messages, cursor: res.data.nextCursor };
   },
+
+  // gửi tin nhắn đơn
+  async sendDirectMessage(
+    recipientId: string,
+    content: string = "",
+    imgUrl?: string,
+    conversationId?: string,
+  ) {
+    const res = await api.post("/messages/direct", {
+      recipientId,
+      content,
+      imgUrl,
+      conversationId,
+    });
+    return res.data.message;
+  },
+
+  // gửi tin nhắn nhóm
+  async sendGroupMessage(
+    conversationId: string,
+    content: string = "",
+    imgUrl?: string,
+  ) {
+    const res = await api.post("/messages/group", {
+      conversationId,
+      content,
+      imgUrl,
+    });
+    return res.data.message;
+  },
 };

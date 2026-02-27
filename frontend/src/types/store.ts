@@ -5,9 +5,7 @@ import type { User } from "./user";
 export interface AuthState {
   accessToken: string | null;
   user: User | null;
-  convoLoading: boolean;
-
-  messageLoading: boolean;
+  loading: boolean;
 
   setAccessToken: (accessToken: string) => void;
   clearState: () => void; // ko trả về kdl j cả
@@ -51,4 +49,14 @@ export interface ChatState {
 
   fetchConversation: () => Promise<void>;
   fetchMessages: (conversations?: string) => Promise<void>;
+  sendDirectMessage: (
+    recipientId: string,
+    content: string,
+    imgUrl?: string,
+  ) => Promise<void>;
+  sendGroupMessage: (
+    conversationId: string,
+    content: string,
+    imgUrl?: string,
+  ) => Promise<void>;
 }

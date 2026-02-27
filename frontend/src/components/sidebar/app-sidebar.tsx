@@ -29,9 +29,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuthStore();
 
   return (
-    // <Sidebar variant="inset" {...props}>
-
-    <Sidebar collapsible="none" variant="inset" {...props}>
+    <Sidebar variant="inset" {...props}>
       {/* header */}
       <SidebarHeader>
         <SidebarMenu>
@@ -62,7 +60,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       {/* content */}
-      <SidebarContent>
+      <SidebarContent className="beautiful-scrollbar">
         {/* New chat */}
 
         <SidebarGroup>

@@ -7,6 +7,8 @@ npm i -D @types/node --> giúp TS hiểu kdl của nodejs
 npx shadcn@latest add signup-04 --> tạo giao diện đăng ký bằng shadcn
 npx shadcn@latest add sidebar-08 --> siderbar
 npx shadcn@latest add switch badge dialog textarea popover --> component ui shadcn
+npm i tailwind-scrollbar --> tải pakage custom giao diện thanh cuộn
+npm i emoji-mart @emoji-mart/data @emoji-mart/react -->Thư viện chính để hiển thị emoji picker, Chứa database emoji (toàn bộ dữ liệu emoji: tên, category, unicode, keywords…).
 
 ---
 

@@ -93,6 +93,39 @@ export const useChatStore = create<ChatState>()(
           set({ messageLoading: false });
         }
       },
+      sendDirectMessage: async (recipientId, content, imgUrl) => {
+        try {
+          const { activeConversationId } = get();
+          await chatService.sendDirectMessage(
+            recipientId,
+            content,
+            imgUrl,
+            activeConversationId || undefined,
+          );
+          // reset lại danh sách đã đọc, vì sẽ chưa ai đọc tin đó của mình
+          set((state) => ({
+            conversations: state.conversations.map((c) =>
+              c._id === activeConversationId ? { ...c, seenBy: [] } : c,
+            ),
+          }));
+        } catch (error) {
+          console.error("Lỗi xãy ra khi gửi direct message", error);
+        }
+      },
+      sendGroupMessage: async (conversationId, content, imgUrl) => {
+        try {
+          await chatService.sendGroupMessage(conversationId, content, imgUrl);
+
+          // reset danh sách đọc
+          set((state) => ({
+            conversations: state.conversations.map((c) =>
+              c._id === get().activeConversationId ? { ...c, seenBy: [] } : c,
+            ),
+          }));
+        } catch (error) {
+          console.error("Lỗi xãy ra khi gửi group message", error);
+        }
+      },
     }),
     {
       name: "chat-storage",
