@@ -17,7 +17,7 @@ const ChatWelcomeScreen = () => {
             <span className="text-3xl pulse-ring">🗯️</span>
           </div>
           <h2 className="text-2xl font-bold mb-2 bg-gradient-chat bg-clip-text text-transparent">
-            Chào mừng bạn đến với QApp!
+            Chào mừng bạn đến với QChat!
           </h2>
           <p className="text-muted-foreground">
             Chọn một cuộc hội thoại để bắt đầu chat!

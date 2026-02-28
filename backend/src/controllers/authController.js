@@ -5,7 +5,7 @@ import Session from "../models/Session.js";
 import crypto from "crypto";
 
 const ACCESS_TOKEN_TTL = "30m"; // thường dưới 15', o localhost này làm 30' cho dể test
-// const ACCESS_TOKEN_TTL = "30s"; // test
+
 const REFRESH_TOKEN_TTL = 14 * 24 * 60 * 60 * 1000; // 14 ngay
 
 export const signUp = async (req, res) => {
@@ -14,18 +14,18 @@ export const signUp = async (req, res) => {
     if (!username || !password || !email || !firstName || !lastName) {
       return res.status(400).json({
         message:
-          "không thể thiếu username, password, email, firstName, lastName",
+          "Không thể thiếu username, password, email, firstName, lastName",
       });
     }
     // kiem tra xem user tòn tại chưa
     const duplicate = await User.findOne({ username });
     if (duplicate) {
       return res.status(409).json({
-        message: "user da ton tai",
+        message: "user đã tồn tại",
       }); // nếu user đã tồn tại --> thông báo
     }
     // nếu chưa --> mã hóa pass
-    const hashedPassword = await bcrypt.hash(password, 10); // ma hoa pass goc 2^10 lan, thuong dung 10 hoac 12
+    const hashedPassword = await bcrypt.hash(password, 10); // mã hóa pass gốc 2^10 lần, thường dùng 10 hoặc 12
     // tạo user mới
     await User.create({
       username,
@@ -36,8 +36,8 @@ export const signUp = async (req, res) => {
     // return
     return res.sendStatus(204);
   } catch (error) {
-    console.log("loi khi goi signUp", error);
-    return res.status(500).json({ message: "loi he thong" });
+    console.log("lỗi khi gọi signUp", error);
+    return res.status(500).json({ message: "Lỗi hệ thống" });
   }
 };
 
@@ -47,7 +47,7 @@ export const signIn = async (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) {
       return res.status(400).json({
-        message: "Thiếu username hoac password",
+        message: "Thiếu username hoặc password",
       });
     }
     // lấy hashedPassword trong db so sánh với pass Input
@@ -91,10 +91,10 @@ export const signIn = async (req, res) => {
     // trả access token về trong res
     return res
       .status(200)
-      .json({ message: `User ${user.displayName} da login`, accessToken });
+      .json({ message: `User ${user.displayName} đã login`, accessToken });
   } catch (error) {
     console.log("loi khi goi signIp", error);
-    return res.status(500).json({ message: "loi he thong" });
+    return res.status(500).json({ message: "Lỗi hệ thống" });
   }
 };
 
@@ -103,7 +103,7 @@ export const signOut = async (req, res) => {
     // lấy refesh token từ cookie
     const token = req.cookies?.refreshToken;
     if (token) {
-      // xóa refresh token trong Session --> access token thi xu ly o client
+      // xóa refresh token trong Session --> access token thì xử lý ở client
       await Session.deleteOne({ refreshToken: token });
 
       // xóa cookie
@@ -111,29 +111,29 @@ export const signOut = async (req, res) => {
     }
     return res.sendStatus(204);
   } catch (error) {
-    console.log("loi khi goi signOut", error);
-    return res.status(500).json({ message: "loi he thong" });
+    console.log("lỗi khi gọi signOut", error);
+    return res.status(500).json({ message: "Lỗi hệ thống" });
   }
 };
 
-// tao accessToken moi tu refresh token
+// tao accessToken mới tu refresh token
 export const refreshToken = async (req, res) => {
   try {
     // lay refreshToken tu cookie
     const token = req.cookies?.refreshToken;
     if (!token) {
-      return res.status(401).json({ message: "Token khong ton tai" });
+      return res.status(401).json({ message: "Token không tồn tại" });
     }
     // so sánh refreshT trong db
     const session = await Session.findOne({ refreshToken: token });
     if (!session) {
       return res
         .status(403)
-        .json({ message: "Token khong hop le hoac da het han" });
+        .json({ message: "Token không hợp lệ hoặc đã hết hạn" });
     }
     // kiểm tra refreshT hết hạn chưa --> nếu time hết hạn < time hiện tại ==> hết hạn
     if (session.expiresAt < new Date()) {
-      return res.status(403).json({ message: "Token da het han" });
+      return res.status(403).json({ message: "Token đã hết hạn" });
     }
     // nếu chưa tạo accesstoken mới
     const accessToken = jwt.sign(
@@ -146,7 +146,7 @@ export const refreshToken = async (req, res) => {
     // return
     return res.status(200).json({ accessToken });
   } catch (error) {
-    console.log("loi khi goi refreshToken", error);
-    return res.status(500).json({ message: "loi he thong" });
+    console.log("Lỗi khi gọi refreshToken", error);
+    return res.status(500).json({ message: "Lỗi hệ thống" });
   }
 };

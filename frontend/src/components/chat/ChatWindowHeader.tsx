@@ -50,7 +50,7 @@ const ChatWindowHeader = ({ chat }: { chat?: Conversation }) => {
               <>
                 <UserAvatar
                   type={"sidebar"}
-                  name={otherUser?.displayName || "QApp"}
+                  name={otherUser?.displayName || "QChat"}
                   avatarUrl={otherUser?.avatarUrl || undefined}
                 />
                 {/* note: nào kết nối socket io thì sửa lại status theo đó */}

@@ -4,10 +4,11 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import axios from "axios";
 
 const api = axios.create({
-  baseURL:
-    import.meta.env.MODE === "development"
-      ? "http://localhost:5001/api"
-      : "/api",
+  // vì đã tạ .env.production và .env.development Vite sẽ tự hiểu mà dùng, nên ko cần dòng này nũa
+  // baseURL:import.meta.env.MODE === "development"? "http://localhost:5001/api": "/api",
+
+  baseURL: import.meta.env.VITE_API_URL,
+
   withCredentials: true, //ko có dòng này thì cookie ko gui len server, gây vc logout liên tục
 });
 

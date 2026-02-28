@@ -17,7 +17,7 @@ export const sendFriendRequest = async (req, res) => {
 
     const userExists = await User.exists({ _id: to }); // [kiểm tra] có user nào có _id = bien to không --> null / obj(_id)
     if (!userExists) {
-      return res.status(404).json({ message: "Nguoi dung khong ton tai" });
+      return res.status(404).json({ message: "Người dùng ko tồn tại" });
     }
 
     // Chuẩn hoá thứ tự 2 user
@@ -39,7 +39,7 @@ export const sendFriendRequest = async (req, res) => {
     ]);
 
     if (alreadyFriends) {
-      return res.status(400).json({ message: "Hai nguoi đã là bạn bè" });
+      return res.status(400).json({ message: "Hai người đã là bạn bè" });
     }
     if (existingRequest) {
       return res.status(400).json({ message: "Đã có lời mời kết bạn" });
@@ -54,9 +54,9 @@ export const sendFriendRequest = async (req, res) => {
 
     return res
       .status(201)
-      .json({ message: "Gui loi moi ket ban thanh cong", request });
+      .json({ message: "Gửi lời mời kết bạn thành công", request });
   } catch (error) {
-    console.error("Loi khi gui yeu cau ket ban");
+    console.error("Lỗi khi gửi yêu cầu kết bạn");
     return res.status(500).json({ message: "Lỗi hệ thống" });
   }
 };
@@ -71,17 +71,17 @@ export const acceptFriendRequest = async (req, res) => {
     if (!request) {
       return res
         .status(404)
-        .json({ message: "Khong tim thay loi moi ket ban" });
+        .json({ message: "Không tìm thấy lời mời kết bạn" });
     }
 
     // dam bao rang nguoi nhan moi dc quyen chap nhan, (tránh tình trạng tự gửi lời mời rồi tự gọi api request chấp nhận)
     if (request.to.toString() !== userId.toString()) {
       return res
         .status(403)
-        .json({ message: "Ban ko co quyen chap nhan loi moi nay" });
+        .json({ message: "Bạn ko có quyền chấp nhận lời mời này" });
     }
 
-    // neu ok het thi create quan he ban be
+    // nếu ok hết thì create quan hệ bạn bè
     const friend = await Friend.create({
       userA: request.from,
       userB: request.to,
@@ -96,7 +96,7 @@ export const acceptFriendRequest = async (req, res) => {
       .lean(); // toi uu hieu nang query, nhanh, nhẹ hơn --> vi có lean() sẽ trả về obj thay vì mongoose document
 
     return res.status(200).json({
-      message: "chap nhan loi moi ket ban thanh cong",
+      message: "Chấp nhận lời mời kết bạn thành công",
       newFriend: {
         _id: from?._id,
         displayName: from?.displayName,
@@ -104,7 +104,7 @@ export const acceptFriendRequest = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Loi khi chap nhan loi moi ket ban");
+    console.error("Lỗi khi chấp nhận lời mời kết bạn");
     return res
       .status(500)
       .json({ message: "Lỗi hệ thống", error: error.message });
@@ -122,12 +122,12 @@ export const declineFriendRequest = async (req, res) => {
     if (!request) {
       return res
         .status(404)
-        .json({ message: "Khong tim thay loi moi ket ban" });
+        .json({ message: "Không tìm thấy lời mời kết bạn" });
     }
     if (request.to.toString() !== userId) {
       return res
         .status(403)
-        .json({ message: "Ban ko co quyen tu choi loi moi nay" });
+        .json({ message: "Bạn không có quyền từ chối lời mời này" });
     }
 
     // xoa loi moi kb va ko can tra ve gia tri j ca
@@ -135,7 +135,7 @@ export const declineFriendRequest = async (req, res) => {
 
     return res.sendStatus(204);
   } catch (error) {
-    console.error("Loi khi tu choi loi moi ket ban");
+    console.error("Lỗi khi từ chối lời mời kết bạn");
     return res.status(500).json({ message: "Lỗi hệ thống" });
   }
 };
@@ -163,7 +163,7 @@ export const getAllFriends = async (req, res) => {
 
     return res.status(200).json({ friends });
   } catch (error) {
-    console.error("Loi khi lay danh sach ban be");
+    console.error("Lỗi khi lấy danh sách bạn bè");
     return res.status(500).json({ message: "Lỗi hệ thống" });
   }
 };
@@ -180,7 +180,7 @@ export const getFriendRequests = async (req, res) => {
 
     res.status(200).json({ sent, received }); // trả dữ liệu về frontend use
   } catch (error) {
-    console.error("Loi khi lay danh sach yeu cau ket ban");
+    console.error("Lỗi khi lấy danh sách lời mời kết bạn");
     return res.status(500).json({ message: "Lỗi hệ thống" });
   }
 };

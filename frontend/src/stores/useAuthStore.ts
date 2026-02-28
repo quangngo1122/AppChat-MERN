@@ -14,8 +14,8 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       accessToken: null,
-      user: null, // thong tin nguoi dung
-      loading: false, // theo doi trang thai khi goi api
+      user: null, // Thông tin người dùng
+      loading: false, // theo dõi trạng thái khi gọi api
 
       setAccessToken: (accessToken) => {
         set({ accessToken });

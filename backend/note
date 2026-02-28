@@ -5,6 +5,8 @@ pakage install:
     npm i jsonwebtoken bcrypt cookie-parser --> tạo và xác thực token, mã há mk, đọc cookie từ req
     node ==> require('crypto').randomBytes(64).toString('hex')  --> tạo chuỗi ngẫu nhiên dài 64 byte để làm secret key cho token
     npm i swagger-ui-express   --> tạo tài liệu API bằng Swagger
+   
+    npm i socket.io             --> tạo kết nối WebSocket cho real-time communication 28/2
 
 Đặc tả thư mục:
     controllers --> phần sử lý logic các tính năng

@@ -1,8 +1,8 @@
 import Conversation from "../models/Conversation.js";
 import Message from "../models/Message.js";
 
+// tạo 1 cuộc trò truyện mới (đơn, nhóm)
 export const createConversation = async (req, res) => {
-  // tạo 1 cuộc trò truyện mới (đơn, nhóm)
   try {
     const { type, name, memberIds } = req.body; // loại chat, tên nhóm chat, danh sách thành viên
     const userId = req.user._id;
@@ -74,8 +74,8 @@ export const createConversation = async (req, res) => {
   }
 };
 
+// Lấy danh sách các cuộc trò chuyện (conversations) mà user hiện tại đang tham gia --> Trả về dữ liệu đã được format lại
 export const getConversation = async (req, res) => {
-  // Lấy danh sách các cuộc trò chuyện (conversations) mà user hiện tại đang tham gia --> Trả về dữ liệu đã được format lại
   try {
     const userId = req.user._id;
     const conversations = await Conversation.find({

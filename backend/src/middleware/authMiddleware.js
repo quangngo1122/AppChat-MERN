@@ -9,7 +9,7 @@ export const protectedRoute = (req, res, next) => {
     const token = authHeader && authHeader.split(" ")[1]; // Bearer ...<token>...
 
     if (!token) {
-      return res.status(401).json({ message: "Khong tim thay accessToken" });
+      return res.status(401).json({ message: "Không tìm thấy accessToken" });
     }
     // xác nhận token hợp lệ
     jwt.verify(
@@ -21,14 +21,14 @@ export const protectedRoute = (req, res, next) => {
           console.error(err);
           return res
             .status(403)
-            .json({ message: "accessToken het han hoac khong dung" });
+            .json({ message: "accessToken hết hạn hoặc không đúng" });
         }
         // tìm user
         const user = await User.findById(decodedUser.userId).select(
           "-hashedPassword",
         ); // lấy tất cả thông tin user trừ mk
         if (!user) {
-          return res.status(404).json({ message: "người dùng không tồn tại" });
+          return res.status(404).json({ message: "Người dùng không tồn tại" });
         }
         // trả user về trong req
         req.user = user; // gắn thông tin vào req.user để các midd hoặc route phía sau có thể tái sử dụng lại
@@ -37,7 +37,7 @@ export const protectedRoute = (req, res, next) => {
       },
     );
   } catch (error) {
-    console.error("loi khi xac minh JWT trong authMiddleware", error);
+    console.error("lỗi khi xác minh JWT trong authMiddleware", error);
     return res.status(500).json({ message: "Lỗi hệ thống" });
   }
 };

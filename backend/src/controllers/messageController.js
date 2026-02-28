@@ -72,7 +72,7 @@ export const sendGroupMessage = async (req, res) => {
 
     return res.status(201).json({ message });
   } catch (error) {
-    console.error("Loi xãy ra khi gửi tin nhắn nhóm", error);
+    console.error("Lỗi xãy ra khi gửi tin nhắn nhóm", error);
     return res.status(500).json({ message: "Lỗi hệ thống" });
   }
 };
