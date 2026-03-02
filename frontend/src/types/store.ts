@@ -64,6 +64,9 @@ export interface ChatState {
 
 export interface SocketState {
   socket: Socket | null;
+
+  onlineUsers: string[]; // mảng string chứa danh sách user online
+
   connectSocket: () => void;
   disconnectSocket: () => void;
 }

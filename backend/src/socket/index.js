@@ -24,13 +24,25 @@ const io = new Server(server, {
 // use middleware socket
 io.use(socketMiddleWare);
 
+// *1 xử lý sự kiện online / offline --> backend lưu lại danh sách user on, mỗi khi có người on/off gửi lại danh sách mới cho tất cả ngừi dùng
+const onlineUsers = new Map(); // keys: values --> userId: socketId  --> dùng cho app nhở/ vừa, lớn nên dùng "redis"
+
 // lắng nghe sự kiện kết nối --> sau khi lắng nghe đc sự kết nối thì chạy hàm
 io.on("connection", async (socket) => {
   const user = socket.user;
 
   console.log(`${user.displayName} online với socket ${socket.id}`);
 
+  onlineUsers.set(user._id, socket.id); //*1
+
+  // *1 thông báo cho client danh sách người online
+  io.emit("online-users", Array.from(onlineUsers.keys()));
+
   socket.on("disconnect", () => {
+    // *1 thông báo cho client lại danh sách người online
+    onlineUsers.delete(user._id); // xóa user khỏi map
+    io.emit("online-users", Array.from(onlineUsers.keys()));
+
     console.log(`socket disconnected: ${socket.id}`);
   });
 });
