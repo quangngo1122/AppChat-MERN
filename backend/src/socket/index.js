@@ -6,6 +6,7 @@
 import { Server } from "socket.io";
 import http from "http";
 import express from "express";
+import { socketMiddleWare } from "../middleware/socketMiddleWare.js";
 
 // tạo express
 const app = express();
@@ -20,9 +21,14 @@ const io = new Server(server, {
   },
 });
 
+// use middleware socket
+io.use(socketMiddleWare);
+
 // lắng nghe sự kiện kết nối --> sau khi lắng nghe đc sự kết nối thì chạy hàm
 io.on("connection", async (socket) => {
-  console.log(`socket connected: ${socket.id}`);
+  const user = socket.user;
+
+  console.log(`${user.displayName} online với socket ${socket.id}`);
 
   socket.on("disconnect", () => {
     console.log(`socket disconnected: ${socket.id}`);
