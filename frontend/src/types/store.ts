@@ -37,7 +37,7 @@ export interface ChatState {
     {
       items: Message[]; // mảng các tin nhắn
       hasMore: boolean; // để biết có còn tin nhắn cũ chưa load ko --> infinite - scroll
-      nextCursor: string | null; // con trỏ phân trang, để biết load thêm tin nhắn ở khúc nào
+      nextCursor?: string | null; // con trỏ phân trang, để biết load thêm tin nhắn ở khúc nào
     }
   >;
   activeConversationId: string | null; // lưu id cuộc trò truyện dang mở
@@ -60,6 +60,11 @@ export interface ChatState {
     content: string,
     imgUrl?: string,
   ) => Promise<void>;
+
+  // add message --> để UI cập nhật danh sách tin nhắn cho đúng
+  addMessage: (message: Message) => Promise<void>;
+  // update convo --> sau khi thêm tin nhắn thì cập nhật lại 1 số thông tin convo vd: unreadcount, ...
+  updateConversation: (conversation: Conversation) => void;
 }
 
 export interface SocketState {

@@ -126,6 +126,58 @@ export const useChatStore = create<ChatState>()(
           console.error("Lỗi xãy ra khi gửi group message", error);
         }
       },
+      addMessage: async (message) => {
+        try {
+          const { user } = useAuthStore.getState();
+          const { fetchMessages } = get();
+
+          message.isOwn = message.senderId === user?._id;
+
+          const convoId = message.conversationId;
+
+          // danh sách tin nhắn hiện có --> nếu trc đó đã mở conversation, thì prev sẽ chứa các tin nhắn củ,
+          // còn chưa mở conversation lần nào dù đc nhắn thì prev sẽ là mảng tin nhắn rỗng
+          let prevItems = get().messages[convoId]?.items ?? [];
+
+          if (prevItems.length === 0) {
+            await fetchMessages(message.conversationId); // Nếu trong store hiện tại chưa có tin nhắn nào của conversation đó thì đi fetch từ server về.
+            prevItems = get().messages[convoId]?.items ?? []; // Vì fetchMessages sẽ update state, nên sau khi fetch xong ta đọc lại dữ liệu mới trong store.
+          }
+
+          // ktra trong danh sách tin nhắn đã có tin nhắn này chưa
+          set((state) => {
+            if (prevItems.some((m) => m._id === message._id)) {
+              return state;
+            }
+
+            // chưa có thì update thông tin
+            return {
+              messages: {
+                ...state.messages,
+                [convoId]: {
+                  // ghi đè item có key là convoId
+                  items: [...prevItems, message],
+                  hasMore: state.messages[convoId].hasMore,
+                  nextCursor: state.messages[convoId].nextCursor ?? undefined,
+                },
+              },
+            };
+          });
+        } catch (error) {
+          console.error("Lỗi xãy ra khi add message:", error);
+        }
+      },
+      updateConversation: (conversation) => {
+        // update state
+        set((state) => ({
+          conversations: state.conversations.map(
+            (c) =>
+              c._id === conversation._id
+                ? { ...c, ...conversation } //  // tìm đúng conversation cần update, merge object cũ với object mới
+                : c, // Nếu không phải conversation cần update → giữ nguyên.
+          ),
+        }));
+      },
     }),
     {
       name: "chat-storage",

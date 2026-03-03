@@ -154,3 +154,19 @@ export const getMessage = async (req, res) => {
     return res.status(500).json({ message: "Lỗi hệ thống" });
   }
 };
+
+export const getUserConversationForSocketIO = async (userId) => {
+  try {
+    // lấy danh sách conversation id
+    const conversations = await Conversation.find(
+      { "participants.userId": userId },
+      { _id: 1 }, // lấy đúng trường id thôi, vì hàm này cần nhiêu đó nên tránh query nhiều
+    );
+
+    // convert từng id sang dạng string để dể thao tác
+    return conversations.map((c) => c._id.toString());
+  } catch (error) {
+    console.error("Lỗi xãy ra khi fetch conversation", error);
+    return [];
+  }
+};

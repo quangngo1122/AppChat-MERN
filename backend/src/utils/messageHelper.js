@@ -24,3 +24,17 @@ export const updateConversationAfterCreateMessage = (
     conversation.unreadCounts.set(memberId, isSender ? 0 : prevCount + 1); // ai là người gửi thì unread = 0, còn người kia thì tăng 1
   });
 };
+
+// phát sự kiện newmessage vào 1 room
+export const emitNewMessage = (io, conversation, message) => {
+  // join vào 1 cái room xong emit
+  io.to(conversation._id.toString()).emit("new-message", {
+    message,
+    conversation: {
+      _id: conversation._id,
+      lastMessage: conversation.lastMessage,
+      lastMessageAt: conversation.lastMessageAt,
+    },
+    unreadCounts: conversation.unreadCounts,
+  });
+};

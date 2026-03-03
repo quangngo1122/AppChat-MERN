@@ -7,6 +7,7 @@ import { Server } from "socket.io";
 import http from "http";
 import express from "express";
 import { socketMiddleWare } from "../middleware/socketMiddleWare.js";
+import { getUserConversationForSocketIO } from "../controllers/conversationController.js";
 
 // tạo express
 const app = express();
@@ -37,6 +38,13 @@ io.on("connection", async (socket) => {
 
   // *1 thông báo cho client danh sách người online
   io.emit("online-users", Array.from(onlineUsers.keys()));
+
+  // lấy ra danh sách conversation id
+  const conversationIds = await getUserConversationForSocketIO(user._id);
+  // cho user join vào từng room tương ứng --> các room trò truyện nào thì thông báo những người trong room đó --> chỉ cần emit vào đúng room
+  conversationIds.forEach((id) => {
+    socket.join(id);
+  });
 
   socket.on("disconnect", () => {
     // *1 thông báo cho client lại danh sách người online
