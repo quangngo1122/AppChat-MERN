@@ -64,7 +64,9 @@ export interface ChatState {
   // add message --> để UI cập nhật danh sách tin nhắn cho đúng
   addMessage: (message: Message) => Promise<void>;
   // update convo --> sau khi thêm tin nhắn thì cập nhật lại 1 số thông tin convo vd: unreadcount, ...
-  updateConversation: (conversation: Conversation) => void;
+  updateConversation: (conversation: unknown) => void;
+  // updateConversation: (conversation: Conversation) => void;
+  markAsSeen: () => Promise<void>;
 }
 
 export interface SocketState {

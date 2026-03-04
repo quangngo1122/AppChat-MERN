@@ -61,10 +61,27 @@ export const useSocketStore = create<SocketState>((set, get) => ({
       if (
         useChatStore.getState().activeConversationId === message.conversationId
       ) {
-        // đánh dấu đã đọc
+        // đánh dấu đã đọc khi user đang mở convo đó mà đc đối phương gửi tin
+        useChatStore.getState().markAsSeen();
       }
       // update conversation trong store
       useChatStore.getState().updateConversation(updatedConversation);
+    });
+
+    // (read-message) logic xử lý khi user đọc tin nhắn
+    socket.on("read-message", ({ conversation, lastMessage }) => {
+      // chứa thông tin cần cập nhật của convo
+      const updated = {
+        // ...conversation,
+        // lastMessage,
+        _id: conversation._id,
+        lastMessage,
+        lastMessageAt: conversation.lastMessageAt,
+        unreadCounts: conversation.unreadCounts,
+        seenBy: conversation.seenBy,
+      };
+      // cập nhật lại convo trong store
+      useChatStore.getState().updateConversation(updated);
     });
   },
   // ngắt kết nối khi log out hay rời khỏi app

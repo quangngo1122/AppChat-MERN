@@ -7,6 +7,7 @@ import { SidebarInset } from "../ui/sidebar";
 import ChatWindowHeader from "./ChatWindowHeader";
 import ChatWindowBody from "./ChatWindowBody";
 import MessageInput from "./MessageInput";
+import { useEffect } from "react";
 
 const ChatWindowLayout = () => {
   const {
@@ -14,12 +15,27 @@ const ChatWindowLayout = () => {
     conversations,
     messageLoading: loading,
     messages,
+    markAsSeen,
   } = useChatStore();
 
   // xác định cuộc trò truyện đang đc chọn
   const selectedConvo =
     conversations.find((c) => c._id === activeConversationId) ?? null;
 
+  useEffect(() => {
+    if (!selectedConvo) {
+      return;
+    }
+    // nếu đã chọn convo thì gọi hàm
+    const markSeen = async () => {
+      try {
+        await markAsSeen();
+      } catch (error) {
+        console.error("Lỗi khi markSeen", error);
+      }
+    };
+    markSeen();
+  }, [markAsSeen, selectedConvo]);
   // 3 giao diện 3 trường hợp:
 
   // Nếu chưa chọn convo nào "/", hiện giao diện chào

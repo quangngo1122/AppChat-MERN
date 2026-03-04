@@ -178,6 +178,45 @@ export const useChatStore = create<ChatState>()(
           ),
         }));
       },
+      markAsSeen: async () => {
+        try {
+          const { user } = useAuthStore.getState();
+          const { activeConversationId, conversations } = get();
+          if (!activeConversationId || !user) return;
+
+          // tìm convo đc mở
+          const convo = conversations.find(
+            (c) => c._id === activeConversationId,
+          );
+
+          if (!convo) {
+            return;
+          }
+
+          // kiểm tra unread --> nếu ko có tin nhắn chưa đọc thì thôi
+          if ((convo.unreadCounts?.[user._id] ?? 0) === 0) {
+            return;
+          }
+          // gọi api lưu trong service
+          await chatService.markAsSeen(activeConversationId);
+
+          set((state) => ({
+            conversations: state.conversations.map((c) =>
+              c._id === activeConversationId && c.lastMessage
+                ? {
+                    ...c,
+                    unreadCounts: {
+                      ...c.unreadCounts,
+                      [user._id]: 0,
+                    },
+                  }
+                : c,
+            ),
+          }));
+        } catch (error) {
+          console.error("Lỗi xảy ra khi gọi mark as seen", error);
+        }
+      },
     }),
     {
       name: "chat-storage",

@@ -170,3 +170,72 @@ export const getUserConversationForSocketIO = async (userId) => {
     return [];
   }
 };
+
+// api báo cho backend rằng người này đang đọc tin nhắn
+export const maskAsSeen = async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+    const userId = req.user._id.toString();
+
+    const conversation = await Conversation.findById(conversationId).lean();
+
+    if (!conversation) {
+      return res.status(404).json({ message: "Conversation không tồn tại" });
+    }
+
+    // có conversation thì lấy tin nhắn cuồi cùng của convo ra
+    const last = conversation.lastMessage;
+
+    if (!last) {
+      return res
+        .status(200)
+        .json({ message: "Không có tin nhắn để mark as seen" });
+    }
+
+    // ktra xem người gửi cuối cùng có phải người gửi req này ko --> nếu đúng thì ko cần làm j cả
+    if (last.senderId.toString() === userId) {
+      return res.status(200).json({ message: "Seender ko cần MarkAsSeen" });
+    }
+
+    // 1 thêm user vào danh sách seenby và reset số unread count
+    const updated = await Conversation.findByIdAndUpdate(
+      conversationId,
+      {
+        $addToSet: {
+          // toán tử thêm user vào mảng seenby
+          seenBy: userId,
+        },
+        $set: {
+          // toán tử gán giá trị cho 1 field
+          [`unreadCounts.${userId}`]: 0,
+        },
+      },
+      {
+        new: true, // trả về document sau khi update
+      },
+    );
+
+    // 2 emit sự kiện, để tất cả thành viên trong 1 cuộ hội thoại (1 room) biết tin đã đọc
+    io.to(conversationId).emit("read-message", {
+      conversation: updated,
+      lastMessage: {
+        _id: updated?.lastMessage._id,
+        content: updated?.lastMessage.content,
+        createdAt: updated?.lastMessage.createdAt,
+        sender: {
+          _id: updated?.lastMessage.senderId,
+        },
+      },
+    });
+
+    // trả req về client
+    return res.status(200).json({
+      message: "Mark As Seen",
+      seenBy: updated?.seenBy || [],
+      myUnreadCount: updated?.unreadCounts[userId] || 0, // lấy ra tin nhắn chưa đọc của user hiện tại
+    });
+  } catch (error) {
+    console.error("Lỗi khi Mark As Seen", error);
+    return res.status(500).json({ message: "Lỗi hệ thống" });
+  }
+};
