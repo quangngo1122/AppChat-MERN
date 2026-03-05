@@ -29,9 +29,14 @@ const ChatWindowBody = () => {
     (c) => c._id === activeConversationId,
   );
 
+  // biến chứa tên của key trong sessionstorage
+  const key = `chat-scroll-${activeConversationId}`;
+
   // ref --> tham chiếu đến (div) --> tạo div rổng cuối trang, tham chiếu ref đến đó,
   // sau đó làm sự kiện màn hình ở tin nhắn mới nhất khi chọn 1 convo bất kỳ
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const lastMessage = selectedConvo?.lastMessage;
@@ -67,6 +72,39 @@ const ChatWindowBody = () => {
     }
   };
 
+  // hàm lưu vị trí cuộn hiện tại vào sessionstorage, vì khi tin nhắn mới đc load ra thì xãy ra tình trạng scroll chạy xuống lại tin nhắn mới nhất
+  const handleScrollSave = async () => {
+    const container = containerRef.current;
+    if (!container || !activeConversationId) {
+      return;
+    }
+
+    sessionStorage.setItem(
+      key,
+      JSON.stringify({
+        scrollTop: container.scrollTop, // vị trí cuộn hiện tại
+        scrollHeight: container.scrollHeight, // tổng chiều cao có thể cuộn được
+      }),
+    );
+  };
+
+  // cuộn tới vị trí đã lưu ở session khi component rerender khi load tin nhắn cũ
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const item = sessionStorage.getItem(key);
+
+    if (item) {
+      const { scrollTop } = JSON.parse(item); // giải scrollTop: container.scrollTop,
+
+      // hàm này đảm bảo trình quyệt tính toán xong layout mới thực hiện callback bên trong để chính xác vị trí
+      requestAnimationFrame(() => {
+        container.scrollTop = scrollTop;
+      });
+    }
+  }, [messages.length]);
+
   if (!selectedConvo) {
     return <ChatWelcomeScreen />; // chưa mở cái nào thì hiện cái này
   }
@@ -84,6 +122,8 @@ const ChatWindowBody = () => {
     <div className="p-4 bg-primary-foreground h-full flex flex-col overflow-hidden">
       <div
         id="scrollableDiv"
+        ref={containerRef}
+        onScroll={handleScrollSave}
         className="flex flex-col-reverse overflow-y-auto overflow-x-hidden beautiful-scrollbar"
       >
         {/* như một cột móc, ko hiển thị gì, đã đảo ngược thứ tự với infinitescroll */}

@@ -77,3 +77,9 @@ export interface SocketState {
   connectSocket: () => void;
   disconnectSocket: () => void;
 }
+
+export interface FriendState {
+  loading: boolean; // kiểm tra api nào chạy xong
+  searchByUserName: (username: string) => Promise<User | null>; // trả về user / null
+  addFriend: (to: string, message?: string) => Promise<string>;
+}
