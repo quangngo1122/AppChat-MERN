@@ -128,7 +128,7 @@ export const getMessage = async (req, res) => {
     // nếu load thêm tin nhắn cũ
     if (cursor) {
       // query những tin cũ hơn thời điểm hiện tại
-      query.createAt = { $lt: new Date(cursor) }; // $lt là [ < ]
+      query.createdAt = { $lt: new Date(cursor) }; // $lt là [ < ]
     }
 
     // truy vấn message theo điều kiện trong query

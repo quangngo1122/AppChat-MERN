@@ -21,7 +21,8 @@ const MessageItem = ({
   selectedConvo,
   lastMessageStatus,
 }: MessageItemProps) => {
-  const prev = messages[index - 1];
+  // const prev = messages[index - 1];
+  const prev = index + 1 < messages.length ? messages[index + 1] : undefined;
 
   // ktra xem có tách nhóm tn ko, vd 2 tin nhắn cùng là 1 ngừi gửi thì chỉ hiện 1 avt,
   // trong time ko quá dài thì hiện time gửi dưới tn mới nhất thôi
