@@ -1,3 +1,5 @@
+import User from "../models/User.js";
+
 export const authMe = async (req, res) => {
   try {
     const user = req.user; // lấy từ middleware, api nào đc middleware đó bọc vào thì dùng đc
@@ -22,7 +24,7 @@ export const searchUserByUsername = async (req, res) => {
         .json({ message: "cần cung cấp username trong query" });
     }
     // query user
-    const user = await UserActivation.findOne({ username }).select(
+    const user = await User.findOne({ username }).select(
       "_id displayName username avatarUrl",
     );
     return res.status(200).json({ user });
