@@ -44,4 +44,10 @@ export const friendService = {
       console.error("Lỗi khi gửi declineRequest", error);
     }
   },
+
+  // lấy danh sách tất cả bạn bè
+  async getFriendList() {
+    const res = await api.get("/friends");
+    return res.data.friends;
+  },
 };

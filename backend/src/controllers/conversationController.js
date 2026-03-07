@@ -67,7 +67,17 @@ export const createConversation = async (req, res) => {
       { path: "lastMessage.senderId", select: "displayName avatarUrl" }, // người gửi tin cuối cùng
     ]);
 
-    return res.status(201).json({ conversation });
+    // code format lại cấu trúc code cho khớp với frontend
+    const participants = (conversation.participants || []).map((p) => ({
+      _id: p.userId?._id, // giữ lại những field frontend cần.
+      displayName: p.userId?.displayName,
+      avatarUrl: p.userId?.avatarUrl ?? null,
+      joinedAt: p.joinedAt,
+    }));
+
+    const formatted = { ...conversation.toObject(), participants };
+
+    return res.status(201).json({ conversation: formatted });
   } catch (error) {
     console.error("Lỗi khi tạo conversation", error);
     return res.status(500).json({ message: "Lỗi hệ thống" });

@@ -8,7 +8,7 @@ interface fetchMessageProps {
   cursor?: string; // con trỏ phân trang
 }
 
-const pageLimit = 20;
+const pageLimit = 50;
 
 export const chatService = {
   async fetchConversations(): Promise<ConversationResponse> {
@@ -56,5 +56,15 @@ export const chatService = {
   async markAsSeen(conversationId: string) {
     const res = await api.patch(`/conversations/${conversationId}/seen`);
     return res.data;
+  },
+
+  // dùng để tạo conversation mới khi chọn vào bạn bè trong danh sách kết bạn
+  async createConversation(
+    type: "direct" | "group",
+    name: string,
+    memberIds: string[],
+  ) {
+    const res = await api.post("/conversations", { type, name, memberIds });
+    return res.data.conversation;
   },
 };

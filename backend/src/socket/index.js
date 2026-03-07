@@ -41,9 +41,14 @@ io.on("connection", async (socket) => {
 
   // lấy ra danh sách conversation id
   const conversationIds = await getUserConversationForSocketIO(user._id);
+
   // cho user join vào từng room tương ứng --> các room trò truyện nào thì thông báo những người trong room đó --> chỉ cần emit vào đúng room
   conversationIds.forEach((id) => {
     socket.join(id);
+  });
+  // cho user join vào room khi tạo conversation mới qua vc chọn qua danh sách kb --> user có thể gửi, nhận tin nhắn khi vừa tạo hội thoại luôn
+  socket.on("join-conversation", (conversationId) => {
+    socket.join(conversationId);
   });
 
   socket.on("disconnect", () => {

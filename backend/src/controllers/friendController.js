@@ -148,8 +148,8 @@ export const getAllFriends = async (req, res) => {
     const friendships = await Friend.find({
       $or: [{ userA: userId }, { userB: userId }], // tức là chỉ cần userId xuất hiện ở userA/B đều đc
     })
-      .populate("userA", "_id displayName avatarUrl") // ko dùng populate nó sẽ chỉ trả về objId thôi,
-      .populate("userB", "_id displayName avatarUrl") // dùng thì nó đi sang Đi sang collection User lấy thông tin tương ứng để khỏi mắt công viết hàm query thêm
+      .populate("userA", "_id displayName avatarUrl username") // ko dùng populate nó sẽ chỉ trả về objId thôi,
+      .populate("userB", "_id displayName avatarUrl username") // dùng thì nó đi sang Đi sang collection User lấy thông tin tương ứng để khỏi mắt công viết hàm query thêm
       .lean(); // nhẹ, nhanh hơn , ...
 
     if (!friendships.length) {
