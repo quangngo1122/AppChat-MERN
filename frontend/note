@@ -9,8 +9,9 @@ npx shadcn@latest add sidebar-08 --> siderbar
 npx shadcn@latest add switch badge dialog textarea popover --> component ui shadcn
 npm i tailwind-scrollbar --> tải pakage custom giao diện thanh cuộn
 npm i emoji-mart @emoji-mart/data @emoji-mart/react -->Thư viện chính để hiển thị emoji picker, Chứa database emoji (toàn bộ dữ liệu emoji: tên, category, unicode, keywords…).
- npm i socket.io-client --> Thư viện để kết nối và giao tiếp với server qua WebSocket, giúp xây dựng tính năng chat thời gian thực.
- npm i react-infinite-scroll-component --> Thư viện để tạo hiệu ứng cuộn vô hạn, giúp tải thêm nội dung khi người dùng cuộn đến cuối trang.
+npm i socket.io-client --> Thư viện để kết nối và giao tiếp với server qua WebSocket, giúp xây dựng tính năng chat thời gian thực.
+npm i react-infinite-scroll-component --> Thư viện để tạo hiệu ứng cuộn vô hạn, giúp tải thêm nội dung khi người dùng cuộn đến cuối trang.
+npx shadcn@latest add tabs --> Tạo giao diện tab shadcn
 
 ---
 

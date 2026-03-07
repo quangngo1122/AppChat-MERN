@@ -13,4 +13,35 @@ export const friendService = {
     });
     return res.data.message;
   },
+
+  // lấy toàn bộ lời mời kb đã nhận
+  async getAllFriendRequest() {
+    try {
+      const res = await api.get("/friends/requests");
+      const { sent, received } = res.data;
+
+      return { sent, received };
+    } catch (error) {
+      console.error("Lỗi khi gửi getallfriendrequest", error);
+    }
+  },
+
+  // đồng ý
+  async acceptRequest(requestId: string) {
+    try {
+      const res = await api.post(`/friends/requests/${requestId}/accept`);
+      return res.data.requestAcceptedBy;
+    } catch (error) {
+      console.error("Lỗi khi gửi acceptRequest", error);
+    }
+  },
+
+  // từ chối
+  async declineRequest(requestId: string) {
+    try {
+      await api.post(`/friends/requests/${requestId}/decline`);
+    } catch (error) {
+      console.error("Lỗi khi gửi declineRequest", error);
+    }
+  },
 };

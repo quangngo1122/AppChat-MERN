@@ -1,6 +1,6 @@
 import type { Socket } from "socket.io-client";
 import type { Conversation, Message } from "./chat";
-import type { User } from "./user";
+import type { FriendRequest, User } from "./user";
 
 // cấu trúc dữ liệu cho useAuthStore
 export interface AuthState {
@@ -80,6 +80,14 @@ export interface SocketState {
 
 export interface FriendState {
   loading: boolean; // kiểm tra api nào chạy xong
+
+  receivedList: FriendRequest[]; // lời mởi đả nhận
+  sentList: FriendRequest[]; // đã gửi
+
   searchByUserName: (username: string) => Promise<User | null>; // trả về user / null
   addFriend: (to: string, message?: string) => Promise<string>;
+
+  getAllFriendRequests: () => Promise<void>;
+  acceptRequest: (requestId: string) => Promise<void>;
+  declineRequest: (requestId: string) => Promise<void>;
 }
