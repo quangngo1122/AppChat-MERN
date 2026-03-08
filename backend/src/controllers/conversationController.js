@@ -1,5 +1,6 @@
 import Conversation from "../models/Conversation.js";
 import Message from "../models/Message.js";
+import { io } from "../socket/index.js";
 
 // tạo 1 cuộc trò truyện mới (đơn, nhóm)
 export const createConversation = async (req, res) => {
@@ -76,6 +77,13 @@ export const createConversation = async (req, res) => {
     }));
 
     const formatted = { ...conversation.toObject(), participants };
+
+    // nếu tạo là dạng group: emit event cho các thành viên có trong group
+    if (type === "group") {
+      memberIds.forEach((userId) => {
+        io.to(userId).emit("new-group", formatted); // emit event tới room userId
+      });
+    }
 
     return res.status(201).json({ conversation: formatted });
   } catch (error) {

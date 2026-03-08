@@ -15,6 +15,7 @@ export const useChatStore = create<ChatState>()(
       convoLoading: false,
 
       messageLoading: false,
+      loading: false,
       //func
       setActiveConversation: (id) => set({ activeConversationId: id }),
       reset: () => {
@@ -236,6 +237,7 @@ export const useChatStore = create<ChatState>()(
 
       createConversation: async (type, name, memberIds) => {
         try {
+          set({ loading: true });
           const conversation = await chatService.createConversation(
             type,
             name,
@@ -252,6 +254,8 @@ export const useChatStore = create<ChatState>()(
             "Lỗi xãy ra khi gọi createconversation trong store",
             error,
           );
+        } finally {
+          set({ loading: false });
         }
       },
     }),

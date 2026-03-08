@@ -44,6 +44,7 @@ export interface ChatState {
   convoLoading: boolean;
 
   messageLoading: boolean;
+  loading: boolean;
 
   reset: () => void;
   setActiveConversation: (id: string | null) => void;

@@ -51,6 +51,9 @@ io.on("connection", async (socket) => {
     socket.join(conversationId);
   });
 
+  // tạo phòng thoe U id
+  socket.join(user._id.toString());
+
   socket.on("disconnect", () => {
     // *1 thông báo cho client lại danh sách người online
     onlineUsers.delete(user._id); // xóa user khỏi map

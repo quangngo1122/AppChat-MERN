@@ -83,6 +83,15 @@ export const useSocketStore = create<SocketState>((set, get) => ({
       // cập nhật lại convo trong store
       useChatStore.getState().updateConversation(updated);
     });
+
+    // (new group) --> sự kiện khi tạo convo dạng group
+    socket.on("new-group", (conversation) => {
+      // cập nhật danh sách cuộn trò truyện phía client
+      useChatStore.getState().addConvo(conversation);
+
+      // để nhận tin nhắn realtime thì cho socket join vào room conversation vừa tạo
+      socket.emit("join-conversation", conversation._id);
+    });
   },
   // ngắt kết nối khi log out hay rời khỏi app
   disconnectSocket: () => {
