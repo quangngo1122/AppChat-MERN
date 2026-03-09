@@ -1,3 +1,4 @@
+import { uploadImagefromBuffer } from "../middleware/uploadMiddleware.js";
 import User from "../models/User.js";
 
 export const authMe = async (req, res) => {
@@ -31,5 +32,37 @@ export const searchUserByUsername = async (req, res) => {
   } catch (error) {
     console.error("LỖi xãy ra khi searchUserByUsername", error);
     return res.status(500).json({ message: "Lỗi hệ thống" });
+  }
+};
+
+export const uploadAvatar = async (req, res) => {
+  try {
+    const file = req.file; // middleware
+    const userId = req.user._id;
+
+    if (!file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    const result = await uploadImagefromBuffer(file.buffer); // buffer là dữ liệu ảnh lưu trong bộ nhớ
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        avatarUrl: result.secure_url,
+        avatarId: result.public_id,
+      },
+      { new: true }, // trả về user đã đc cập nhật
+    ).select("avatarUrl");
+
+    if (!updatedUser.avatarUrl) {
+      return res.status(400).json({ message: "Avatar trả về null" });
+    }
+
+    // ok thì trả về avt url
+    return res.status(200).json({ avatarUrl: updatedUser.avatarUrl });
+  } catch (error) {
+    console.error("Lỗi xãy ra khi upload avatar", error);
+    return res.status(500).json({ message: "Avt upload failed" });
   }
 };

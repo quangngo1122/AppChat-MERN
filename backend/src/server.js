@@ -15,6 +15,8 @@ import conversationRoute from "./routes/conversationRoute.js";
 // import fs from "fs"; // thư viện đọc nd tệp json
 import { app, server } from "./socket/index.js";
 
+import { v2 as cloudinary } from "cloudinary";
+
 // vì bên socket đã tạo express rồi { app, server } nên ko cần khởi tạo nữa
 // const app = express();
 
@@ -24,6 +26,13 @@ const PORT = process.env.PORT || 5001;
 app.use(express.json()); // giup hiểu và đọc req body dưới dạng json
 app.use(cookieParser());
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true })); // credentials: true --> Cho phép gửi: Cookie, HTTP-only cookie , Authorization header ,Session
+
+// Configuration
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET, // Click 'View API Keys' above to copy your API secret
+});
 
 // swagger
 // const swaggerDocument = JSON.parse(
