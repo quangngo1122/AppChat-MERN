@@ -9,6 +9,9 @@ export interface AuthState {
   loading: boolean;
 
   setAccessToken: (accessToken: string) => void;
+
+  setUser: (user: User) => void;
+
   clearState: () => void; // ko trả về kdl j cả
 
   signUp: (
@@ -101,4 +104,8 @@ export interface FriendState {
   declineRequest: (requestId: string) => Promise<void>;
 
   getFriends: () => Promise<void>;
+}
+
+export interface UserState {
+  updateAvatarUrl: (formdata: FormData) => Promise<void>;
 }

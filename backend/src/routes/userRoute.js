@@ -20,6 +20,6 @@ router.get("/search", searchUserByUsername);
 
 // middle sẽ tìm trường có tên file trong res body -> đọc file vào memory
 // sau đó gán dữ liệu thô vào res.file trước khi chuyển qua hàm controler
-router.post("/uploadAvatar", upload.single("file", uploadAvatar));
+router.post("/uploadAvatar", upload.single("file"), uploadAvatar);
 
 export default router;

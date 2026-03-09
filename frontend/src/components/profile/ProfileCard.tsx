@@ -6,6 +6,7 @@ import UserAvatar from "../chat/UserAvatar";
 import { Badge } from "../ui/badge";
 import { cn } from "@/lib/utils";
 import { useSocketStore } from "@/stores/useSocketStore";
+import AvatarUploader from "./AvatarUploader";
 
 interface ProfileCardProps {
   user: User | null; // có thể null trong trạng thái chưa load xong dữ liệu
@@ -25,14 +26,15 @@ const ProfileCard = ({ user }: ProfileCardProps) => {
   return (
     <Card className="overflow-hidden p-0 h-52 bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500">
       <CardContent className="mt-20 pb-8 flex flex-col sm:flex-row items-center sm:items-end gap-6">
-        <div>
+        <div className="relative">
           <UserAvatar
             type="profile"
             className="ring-4 ring-white shadow-lg"
             name={user.displayName}
-            avatarUrl={user.displayName && undefined}
+            avatarUrl={user.avatarUrl ?? undefined}
           />
-          {/*note: avatar upload */}
+          {/* avatar upload */}
+          <AvatarUploader />
         </div>
         {/* user info */}
         <div className="text-center sm:text-left flex-1">
