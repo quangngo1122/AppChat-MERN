@@ -24,8 +24,10 @@ const ProfileCard = ({ user }: ProfileCardProps) => {
   const isOnline = onlineUsers.includes(user._id) ? true : false;
 
   return (
-    <Card className="overflow-hidden p-0 h-52 bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500">
-      <CardContent className="mt-20 pb-8 flex flex-col sm:flex-row items-center sm:items-end gap-6">
+    // <Card className="overflow-hidden p-0 h-52 bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500">
+    //   <CardContent className="mt-20 pb-8 flex flex-col sm:flex-row items-center sm:items-end gap-6">
+    <Card className="overflow-hidden p-0 h-42 bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500">
+      <CardContent className="mt-10 pb-8 flex flex-col sm:flex-row items-center sm:items-end gap-6">
         <div className="relative">
           <UserAvatar
             type="profile"

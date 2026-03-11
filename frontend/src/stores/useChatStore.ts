@@ -258,6 +258,37 @@ export const useChatStore = create<ChatState>()(
           set({ loading: false });
         }
       },
+
+      removeConversation: (conversationId) => {
+        // helper to clear conversation locally without network request
+        set((state) => {
+          const { [conversationId]: _removed, ...restMessages } =
+            state.messages;
+          return {
+            conversations: state.conversations.filter(
+              (c) => c._id !== conversationId,
+            ),
+            messages: restMessages,
+            activeConversationId:
+              state.activeConversationId === conversationId
+                ? null
+                : state.activeConversationId,
+          } as any;
+        });
+      },
+
+      deleteConversation: async (conversationId) => {
+        try {
+          set({ loading: true });
+          await chatService.deleteConversation(conversationId);
+          // remove locally as well
+          get().removeConversation(conversationId);
+        } catch (error) {
+          console.error("Lỗi khi xoá conversation trong store", error);
+        } finally {
+          set({ loading: false });
+        }
+      },
     }),
     {
       name: "chat-storage",

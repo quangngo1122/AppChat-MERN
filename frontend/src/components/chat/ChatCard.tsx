@@ -1,5 +1,12 @@
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Trash2 } from "lucide-react";
 import { Card } from "../ui/card";
+
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "../ui/dropdown-menu";
 
 // format định dạng hiển thị time
 import { formatOnlineTime, cn } from "@/lib/utils";
@@ -13,6 +20,7 @@ interface ChatCardProps {
   unreadCount?: number; // số tin chưa đọc
   leftSection: React.ReactNode; // avt
   subtitle: React.ReactNode; // review tin nhắn cuối
+  onDelete?: (id: string) => void; // hàm gọi khi nhấn xóa
 }
 
 const ChatCard = ({
@@ -24,12 +32,13 @@ const ChatCard = ({
   unreadCount,
   leftSection,
   subtitle,
+  onDelete,
 }: ChatCardProps) => {
   return (
     <Card
       key={convoId}
       className={cn(
-        "border-none p-3 cursor-pointer transition-smooth glass hover:bg-muted/30",
+        "group border-none p-3 cursor-pointer transition-smooth glass hover:bg-muted/30",
         isActive &&
           "ring-2 ring-primary/50 bg-linear-to-tr from-primary-glow/10 to-primary-foreground",
       )}
@@ -55,7 +64,28 @@ const ChatCard = ({
             <div className="flex items-center gap-1 flex-1 min-w-0">
               {subtitle}
             </div>
-            <MoreHorizontal className="size-4 text-muted-foreground opacity-0 group-hover:opacity-100 hover:size-5 transition-smooth" />
+            {onDelete ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    onClick={(e) => e.stopPropagation()}
+                    // className="size-4 text-muted-foreground opacity-0 group-hover:opacity-100 hover:size-5 transition-smooth"
+                    className="size-4 text-muted-foreground opacity-100 md:opacity-0 md:group-hover:opacity-100 hover:size-5 transition-smooth"
+                  >
+                    <MoreHorizontal />
+                    <span className="sr-only">Options</span>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent side="right" className="w-auto">
+                  <DropdownMenuItem onClick={() => onDelete(convoId)}>
+                    <Trash2 className="text-muted-foreground mr-2" />
+                    <span>Xóa cuộc trò chuyện</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <MoreHorizontal className="size-4 text-muted-foreground opacity-0 group-hover:opacity-100 hover:size-5 transition-smooth" />
+            )}
           </div>
         </div>
       </div>

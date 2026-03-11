@@ -26,9 +26,9 @@ const ProfileDialog = ({ open, setOpen }: ProfileDialogProps) => {
     >
       <DialogContent className="overflow-y-auto p-0 bg-transparent border-0 shadow-2xl">
         <div className="bg-gradient-glass">
-          <div className="max-w-4xl mx-auto p-4">
+          <div className="max-w-4xl mx-auto px-4 py-2 ">
             {/* hoading --> tiêu đề h1 */}
-            <DialogHeader className="mb-6">
+            <DialogHeader className="mb-3">
               <DialogTitle className="text-2xl font-bold text-foreground">
                 Profile & Setting
               </DialogTitle>

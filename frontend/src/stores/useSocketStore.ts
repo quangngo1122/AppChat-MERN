@@ -92,6 +92,11 @@ export const useSocketStore = create<SocketState>((set, get) => ({
       // để nhận tin nhắn realtime thì cho socket join vào room conversation vừa tạo
       socket.emit("join-conversation", conversation._id);
     });
+
+    // (conversation deleted) --> user nào nằm trong room đó biết convo bị xoá
+    socket.on("conversation-deleted", ({ conversationId }) => {
+      useChatStore.getState().removeConversation(conversationId);
+    });
   },
   // ngắt kết nối khi log out hay rời khỏi app
   disconnectSocket: () => {

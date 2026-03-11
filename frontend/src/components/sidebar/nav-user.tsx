@@ -85,7 +85,7 @@ export function NavUser({ user }: { user: User }) {
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setFriendRequestOpen(true)}>
                   <Bell className="text-muted-foreground dark:group-focus:text-accent-foreground!" />
-                  Thông Báo
+                  Lời Mời Kết Bạn
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />

@@ -257,3 +257,46 @@ export const maskAsSeen = async (req, res) => {
     return res.status(500).json({ message: "Lỗi hệ thống" });
   }
 };
+
+// xóa conversation và tin nhắn thuộc về nó
+export const deleteConversation = async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+    const userId = req.user._id.toString();
+
+    const conversation = await Conversation.findById(conversationId);
+
+    if (!conversation) {
+      return res.status(404).json({ message: "Conversation không tồn tại" });
+    }
+
+    // kiểm tra cuộc trò truyện có id mình ko
+    const isParticipant = conversation.participants.some(
+      (p) => p.userId.toString() === userId,
+    );
+    // ko có thì méo có quyền delete
+    if (!isParticipant) {
+      return res
+        .status(403)
+        .json({ message: "Bạn không có quyền xóa cuộc trò chuyện này" });
+    }
+
+    // xoá tất cả tin nhắn trong conversation
+    await Message.deleteMany({ conversationId });
+    // xong xóa conversation
+    await Conversation.findByIdAndDelete(conversationId);
+
+    // thông báo cho tất cả thành viên trong convo (dựa trên userId rooms)
+    const participantIds = conversation.participants.map((p) =>
+      p.userId.toString(),
+    );
+    participantIds.forEach((id) => {
+      io.to(id).emit("conversation-deleted", { conversationId });
+    });
+
+    return res.status(200).json({ message: "Đã xóa cuộc trò chuyện" });
+  } catch (error) {
+    console.error("Lỗi khi xóa conversation", error);
+    return res.status(500).json({ message: "Lỗi hệ thống" });
+  }
+};

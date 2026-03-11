@@ -4,6 +4,7 @@ import type { Conversation } from "@/types/chat";
 import ChatCard from "./ChatCard";
 import UnreadCountBadge from "./UnreadCountBadge";
 import GroupChatAvatar from "./GroupChatAvatar";
+import { toast } from "sonner";
 
 const GroupChatCard = ({ convo }: { convo: Conversation }) => {
   const { user } = useAuthStore();
@@ -29,6 +30,20 @@ const GroupChatCard = ({ convo }: { convo: Conversation }) => {
     }
   };
 
+  const handleDelete = async () => {
+    if (!window.confirm("Bạn có chắc muốn xóa cuộc trò chuyện này?")) {
+      return;
+    }
+
+    try {
+      await useChatStore.getState().deleteConversation(convo._id);
+      toast.success("Đã xóa cuộc trò chuyện");
+    } catch (error) {
+      console.error("Lỗi xóa convo", error);
+      toast.error("Xóa cuộc trò chuyện thất bại");
+    }
+  };
+
   return (
     <ChatCard
       convoId={convo._id}
@@ -40,6 +55,7 @@ const GroupChatCard = ({ convo }: { convo: Conversation }) => {
       }
       isActive={activeConversationId === convo._id} // ktra xem có đang mở convo này ko
       onSelect={handleSelectConversation}
+      onDelete={handleDelete}
       unreadCount={unreadCount}
       leftSection={
         <>
