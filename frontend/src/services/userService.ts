@@ -12,4 +12,14 @@ export const userService = {
     }
     return res.data;
   },
+
+  // Cập nhật thông tin người dùng hiện tại.
+  updateProfile: async (data: Record<string, any>) => {
+    // note: record< KDL key, value> --> mô tả "object" có các key và value theo kiểu xác định
+    const res = await api.patch("/users/me", data);
+    if (res.status >= 400) {
+      throw new Error(res.data.message || "Cập nhật thất bại");
+    }
+    return res.data.user;
+  },
 };

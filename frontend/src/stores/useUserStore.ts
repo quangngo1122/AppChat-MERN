@@ -27,4 +27,28 @@ export const useUserStore = create<UserState>((set, get) => ({
       toast.error("Upload avatar không thành công");
     }
   },
+
+  updatePersonalInfo: async (info) => {
+    try {
+      const { user, setUser } = useAuthStore.getState();
+      const updated = await userService.updateProfile(info);
+
+      if (user) {
+        setUser({
+          ...user,
+          ...updated,
+        });
+
+        // cập nhật lại danh sách cuộc trò chuyện để hiển thị tên mới
+        useChatStore.getState().fetchConversation();
+      }
+      toast.success("Cập nhật thông tin cá nhân thành công");
+    } catch (error) {
+      console.error("Lỗi khi updatePersonalInfo", error);
+      // const msg = error?.response?.data?.message || "Cập nhật thông tin thất bại";
+      const msg = "Cập nhật thông tin thất bại";
+
+      toast.error(msg);
+    }
+  },
 }));

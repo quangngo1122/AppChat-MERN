@@ -53,7 +53,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       onCheckedChange={
                         toggleTheme
                       } /* chạy mỗi khi bật công tắt */
-                      className="data-[state=checked]:bg-background/80" /* data selector tailwind khi check -> màu nền công tắt tối nhẹ lại*/
+                      className="data-[state=checked]:bg-background/80 cursor-pointer" /* data selector tailwind khi check -> màu nền công tắt tối nhẹ lại*/
                     />
                     <Moon className="size-4 text-white/80" />
                   </div>

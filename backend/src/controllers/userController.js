@@ -66,3 +66,55 @@ export const uploadAvatar = async (req, res) => {
     return res.status(500).json({ message: "Avt upload failed" });
   }
 };
+
+// cập nhật thông tin cá nhân (displayName, username, email, phone, bio)
+export const updatePersonalInfo = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { displayName, username, email, phone, bio } = req.body;
+
+    // build object cập nhật chỉ khi có giá trị
+    const updates = {};
+    if (displayName !== undefined) updates.displayName = displayName.trim();
+    if (username !== undefined)
+      updates.username = username.trim().toLowerCase();
+    if (email !== undefined) updates.email = email.trim().toLowerCase();
+    if (phone !== undefined) updates.phone = phone.trim();
+    if (bio !== undefined) updates.bio = bio.trim();
+
+    if (Object.keys(updates).length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Không có trường nào để cập nhật" });
+    }
+
+    // Nếu đổi username/email thì phải đảm bảo không trùng
+    if (updates.username) {
+      const exist = await User.findOne({
+        username: updates.username,
+        _id: { $ne: userId }, // $ne -> "not equal" (không bằng)
+      });
+      if (exist) {
+        return res.status(409).json({ message: "Username đã được sử dụng" });
+      }
+    }
+    if (updates.email) {
+      const exist = await User.findOne({
+        email: updates.email,
+        _id: { $ne: userId },
+      });
+      if (exist) {
+        return res.status(409).json({ message: "Email đã được sử dụng" });
+      }
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(userId, updates, {
+      new: true,
+    }).select("_id displayName username email phone bio avatarUrl");
+
+    return res.status(200).json({ user: updatedUser });
+  } catch (error) {
+    console.error("Lỗi cập nhật thông tin cá nhân", error);
+    return res.status(500).json({ message: "Lỗi hệ thống" });
+  }
+};

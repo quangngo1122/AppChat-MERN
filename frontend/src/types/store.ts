@@ -110,4 +110,13 @@ export interface FriendState {
 
 export interface UserState {
   updateAvatarUrl: (formdata: FormData) => Promise<void>;
+  updatePersonalInfo: (
+    info: Partial<{
+      displayName: string;
+      username: string;
+      email: string;
+      phone: string;
+      bio: string;
+    }>,
+  ) => Promise<void>;
 }

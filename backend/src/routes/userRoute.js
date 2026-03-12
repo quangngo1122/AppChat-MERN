@@ -4,15 +4,18 @@ import {
   searchUserByUsername,
   test,
   uploadAvatar,
+  updatePersonalInfo,
 } from "../controllers/userController.js";
 import { upload } from "../middleware/uploadMiddleware.js";
 
-// import { protectedRoute } from "../middleware/authMiddleware.js";
+import { protectedRoute } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/me", authMe);
-// router.get("/me", protectedRoute, authMe);
+router.get("/me", protectedRoute, authMe);
+
+// cập nhật thông tin cá nhân
+router.patch("/me", protectedRoute, updatePersonalInfo);
 
 router.get("/test", test);
 
