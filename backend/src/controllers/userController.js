@@ -1,5 +1,7 @@
 import { uploadImagefromBuffer } from "../middleware/uploadMiddleware.js";
+import bcrypt from "bcrypt";
 import User from "../models/User.js";
+import Session from "../models/Session.js";
 
 export const authMe = async (req, res) => {
   try {
@@ -115,6 +117,54 @@ export const updatePersonalInfo = async (req, res) => {
     return res.status(200).json({ user: updatedUser });
   } catch (error) {
     console.error("Lỗi cập nhật thông tin cá nhân", error);
+    return res.status(500).json({ message: "Lỗi hệ thống" });
+  }
+};
+
+// thay đổi mật khẩu
+export const changePassword = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      return res.status(400).json({ message: "Thiếu dữ liệu yêu cầu" });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ message: "Mật khẩu mới không khớp" });
+    }
+
+    if (newPassword.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "Mật khẩu mới phải có ít nhất 6 ký tự" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "Người dùng không tồn tại" });
+    }
+
+    const passwordCorrect = await bcrypt.compare(
+      currentPassword,
+      user.hashedPassword,
+    );
+    if (!passwordCorrect) {
+      return res.status(401).json({ message: "Mật khẩu hiện tại không đúng" });
+    }
+
+    // hash mật khẩu mới và lưu
+    const hashed = await bcrypt.hash(newPassword, 10);
+    user.hashedPassword = hashed;
+    await user.save();
+
+    // tùy chọn: hủy tất cả phiên (refresh token) để log out các thiết bị khác
+    await Session.deleteMany({ userId });
+
+    return res.status(200).json({ message: "Đổi mật khẩu thành công" });
+  } catch (error) {
+    console.error("Lỗi khi đổi mật khẩu", error);
     return res.status(500).json({ message: "Lỗi hệ thống" });
   }
 };

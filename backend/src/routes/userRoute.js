@@ -5,6 +5,7 @@ import {
   test,
   uploadAvatar,
   updatePersonalInfo,
+  changePassword,
 } from "../controllers/userController.js";
 import { upload } from "../middleware/uploadMiddleware.js";
 
@@ -16,6 +17,9 @@ router.get("/me", protectedRoute, authMe);
 
 // cập nhật thông tin cá nhân
 router.patch("/me", protectedRoute, updatePersonalInfo);
+
+// Đổi mật khẩu
+router.patch("/me/password", protectedRoute, changePassword);
 
 router.get("/test", test);
 

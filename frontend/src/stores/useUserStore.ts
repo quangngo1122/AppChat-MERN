@@ -51,4 +51,25 @@ export const useUserStore = create<UserState>((set, get) => ({
       toast.error(msg);
     }
   },
+
+  changePassword: async (
+    currentPassword: string,
+    newPassword: string,
+    confirmPassword: string,
+  ) => {
+    try {
+      await userService.changePassword(
+        currentPassword,
+        newPassword,
+        confirmPassword,
+      );
+      toast.success("Đổi mật khẩu thành công");
+    } catch (error: any) {
+      console.error("Lỗi khi changePassword", error);
+      const msg =
+        error?.response?.data?.message || error?.message || "Thay đổi thất bại";
+      toast.error(msg);
+      throw error;
+    }
+  },
 }));

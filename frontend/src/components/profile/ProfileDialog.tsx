@@ -40,19 +40,19 @@ const ProfileDialog = ({ open, setOpen }: ProfileDialogProps) => {
               <TabsList className="grid w-full grid-cols-3 glass-light">
                 <TabsTrigger
                   value="personal"
-                  className="data-[state=active]:glass-strong"
+                  className="data-[state=active]:glass-strong cursor-pointer"
                 >
                   Tài Khoản
                 </TabsTrigger>
                 <TabsTrigger
                   value="preferences"
-                  className="data-[state=active]:glass-strong"
+                  className="data-[state=active]:glass-strong cursor-pointer"
                 >
                   Cấu Hình
                 </TabsTrigger>
                 <TabsTrigger
                   value="privacy"
-                  className="data-[state=active]:glass-strong"
+                  className="data-[state=active]:glass-strong cursor-pointer"
                 >
                   Bảo Mật
                 </TabsTrigger>

@@ -79,11 +79,17 @@ export function NavUser({ user }: { user: User }) {
 
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem onClick={() => setProfileOpen(true)}>
+                <DropdownMenuItem
+                  onClick={() => setProfileOpen(true)}
+                  className="cursor-pointer"
+                >
                   <UserIcon className="text-muted-foreground dark:group-focus:text-accent-foreground!" />
                   Tài Khoản
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFriendRequestOpen(true)}>
+                <DropdownMenuItem
+                  onClick={() => setFriendRequestOpen(true)}
+                  className="cursor-pointer"
+                >
                   <Bell className="text-muted-foreground dark:group-focus:text-accent-foreground!" />
                   Lời Mời Kết Bạn
                 </DropdownMenuItem>

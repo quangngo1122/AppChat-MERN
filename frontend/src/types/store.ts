@@ -119,4 +119,10 @@ export interface UserState {
       bio: string;
     }>,
   ) => Promise<void>;
+
+  changePassword: (
+    currentPassword: string,
+    newPassword: string,
+    confirmPassword: string,
+  ) => Promise<void>;
 }

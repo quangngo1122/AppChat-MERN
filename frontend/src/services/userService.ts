@@ -22,4 +22,20 @@ export const userService = {
     }
     return res.data.user;
   },
+
+  changePassword: async (
+    currentPassword: string,
+    newPassword: string,
+    confirmPassword: string,
+  ) => {
+    const res = await api.patch("/users/me/password", {
+      currentPassword,
+      newPassword,
+      confirmPassword,
+    });
+    if (res.status >= 400) {
+      throw new Error(res.data.message || "Thay đổi mật khẩu thất bại");
+    }
+    return res.data;
+  },
 };
