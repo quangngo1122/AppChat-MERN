@@ -130,7 +130,11 @@ export function SignupForm({
                 )}
               </div>
 
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
+              <Button
+                type="submit"
+                className="w-full cursor-pointer"
+                disabled={isSubmitting}
+              >
                 Tạo tài khoản
               </Button>
 

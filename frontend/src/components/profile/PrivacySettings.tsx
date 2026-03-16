@@ -7,46 +7,11 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import type { FormEvent, ChangeEvent } from "react";
-import { toast } from "sonner";
-import { useUserStore } from "@/stores/useUserStore";
+import ChangePasswordForm from "./ChangePasswordForm";
 
 const PrivacySettings = () => {
-  const changePassword = useUserStore((s) => s.changePassword);
   const [showChange, setShowChange] = useState(false);
-  const [form, setForm] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
-
-  const handleChange =
-    (key: keyof typeof form) => (e: ChangeEvent<HTMLInputElement>) => {
-      setForm((prev) => ({ ...prev, [key]: e.target.value }));
-    };
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-
-    if (form.newPassword !== form.confirmPassword) {
-      toast.error("Mật khẩu mới và xác nhận không khớp");
-      return;
-    }
-    try {
-      await changePassword(
-        form.currentPassword,
-        form.newPassword,
-        form.confirmPassword,
-      );
-      setShowChange(false);
-      setForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
-    } catch {
-      // error toast already shown by store
-    }
-  };
 
   return (
     <Card className="glass-strong border-border/30">
@@ -62,62 +27,7 @@ const PrivacySettings = () => {
 
       <CardContent className="space-y-6">
         {showChange ? (
-          <form onSubmit={handleSubmit} className="space-y-3">
-            <div className="space-y-2">
-              <Label htmlFor="currentPassword">Mật khẩu hiện tại</Label>
-              <Input
-                id="currentPassword"
-                type="password"
-                value={form.currentPassword}
-                onChange={handleChange("currentPassword")}
-                className="glass-light border-border/30"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="newPassword">Mật khẩu mới</Label>
-              <Input
-                id="newPassword"
-                type="password"
-                value={form.newPassword}
-                onChange={handleChange("newPassword")}
-                className="glass-light border-border/30"
-                required
-                minLength={6}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Xác nhận mật khẩu</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                value={form.confirmPassword}
-                onChange={handleChange("confirmPassword")}
-                className="glass-light border-border/30"
-                required
-                minLength={6}
-              />
-            </div>
-
-            <div className="flex gap-2 justify-between mx-10">
-              <Button
-                type="submit"
-                variant="outline"
-                className="w-1/3 bg-linear-to-r from-blue-500 to-blue-700 text-white hover:opacity-90 transition-opacity"
-              >
-                Lưu mật khẩu
-              </Button>
-
-              <Button
-                type="button"
-                variant="outline"
-                className="w-1/3 bg-linear-to-r from-red-500 to-red-700 text-white hover:opacity-90 transition-opacity"
-                onClick={() => setShowChange(false)}
-              >
-                Huỷ
-              </Button>
-            </div>
-          </form>
+          <ChangePasswordForm onCancel={() => setShowChange(false)} />
         ) : (
           <>
             <div className="space-y-4">

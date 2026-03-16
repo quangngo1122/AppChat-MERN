@@ -43,12 +43,7 @@ const MessageItem = ({
 
   return (
     <>
-      {/* timestamp */}
-      {isShowTime && (
-        <span className="flex text-xs justify-center text-muted-foreground px-1">
-          {formatMessageTime(new Date(message.createdAt))}
-        </span>
-      )}
+      {/* ** vị trí đổi timestamp nằm bên dưới */}
 
       <div
         className={cn(
@@ -104,6 +99,12 @@ const MessageItem = ({
           )}
         </div>
       </div>
+      {/* timestamp */}
+      {isShowTime && (
+        <span className="flex text-xs justify-center text-muted-foreground px-1">
+          {formatMessageTime(new Date(message.createdAt))}
+        </span>
+      )}
     </>
   );
 };
