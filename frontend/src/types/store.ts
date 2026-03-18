@@ -125,4 +125,6 @@ export interface UserState {
     newPassword: string,
     confirmPassword: string,
   ) => Promise<void>;
+
+  deleteAccount: () => Promise<void>;
 }

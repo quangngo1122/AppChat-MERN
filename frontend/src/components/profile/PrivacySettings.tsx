@@ -9,9 +9,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import ChangePasswordForm from "./ChangePasswordForm";
+import DeleteAccountDialog from "./DeleteAccountDialog";
 
 const PrivacySettings = () => {
   const [showChange, setShowChange] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   return (
     <Card className="glass-strong border-border/30">
@@ -62,7 +64,11 @@ const PrivacySettings = () => {
               <h4 className="font-medium mb-3 text-destructive">
                 Khu vực nguy hiểm
               </h4>
-              <Button variant="destructive" className="w-full cursor-pointer">
+              <Button
+                variant="destructive"
+                className="w-full cursor-pointer"
+                onClick={() => setShowDeleteDialog(true)}
+              >
                 Xoá tài khoản
               </Button>
             </div>
@@ -71,6 +77,11 @@ const PrivacySettings = () => {
         )}
         {/* position {2} */}
       </CardContent>
+
+      <DeleteAccountDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+      />
     </Card>
   );
 };

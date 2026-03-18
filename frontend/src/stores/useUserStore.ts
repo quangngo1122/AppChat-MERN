@@ -72,4 +72,19 @@ export const useUserStore = create<UserState>((set, get) => ({
       throw error;
     }
   },
+
+  deleteAccount: async () => {
+    try {
+      await userService.deleteAccount();
+      toast.success("Tài khoản đã được xóa thành công");
+    } catch (error: any) {
+      console.error("Lỗi khi xóa tài khoản", error);
+      const msg =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Xóa tài khoản thất bại";
+      toast.error(msg);
+      throw error;
+    }
+  },
 }));

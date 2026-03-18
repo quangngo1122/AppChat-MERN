@@ -38,4 +38,12 @@ export const userService = {
     }
     return res.data;
   },
+
+  deleteAccount: async () => {
+    const res = await api.delete("/users/me");
+    if (res.status >= 400) {
+      throw new Error(res.data.message || "Xóa tài khoản thất bại");
+    }
+    return res.data;
+  },
 };

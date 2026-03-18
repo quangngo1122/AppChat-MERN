@@ -6,6 +6,7 @@ import {
   uploadAvatar,
   updatePersonalInfo,
   changePassword,
+  deleteAccount,
 } from "../controllers/userController.js";
 import { upload } from "../middleware/uploadMiddleware.js";
 
@@ -20,6 +21,9 @@ router.patch("/me", protectedRoute, updatePersonalInfo);
 
 // Đổi mật khẩu
 router.patch("/me/password", protectedRoute, changePassword);
+
+// Xóa tài khoản
+router.delete("/me", protectedRoute, deleteAccount);
 
 router.get("/test", test);
 

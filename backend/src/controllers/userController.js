@@ -2,6 +2,10 @@ import { uploadImagefromBuffer } from "../middleware/uploadMiddleware.js";
 import bcrypt from "bcrypt";
 import User from "../models/User.js";
 import Session from "../models/Session.js";
+import Friend from "../models/Friend.js";
+import FriendRequest from "../models/FriendRequest.js";
+import Message from "../models/Message.js";
+import Conversation from "../models/Conversation.js";
 
 export const authMe = async (req, res) => {
   try {
@@ -165,6 +169,63 @@ export const changePassword = async (req, res) => {
     return res.status(200).json({ message: "Đổi mật khẩu thành công" });
   } catch (error) {
     console.error("Lỗi khi đổi mật khẩu", error);
+    return res.status(500).json({ message: "Lỗi hệ thống" });
+  }
+};
+
+// xóa tài khoản
+export const deleteAccount = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    // 1. Xóa tất cả sessions của user
+    await Session.deleteMany({ userId });
+
+    // 2. Xóa tất cả friend requests liên quan (gửi hoặc nhận)
+    await FriendRequest.deleteMany({
+      $or: [{ from: userId }, { to: userId }],
+    });
+
+    // 3. Xóa tất cả friends liên quan
+    await Friend.deleteMany({
+      $or: [{ userA: userId }, { userB: userId }],
+    });
+
+    // 4. Xóa tất cả messages của user
+    await Message.deleteMany({ senderId: userId });
+
+    // 5. Xử lý conversations
+    const conversations = await Conversation.find({
+      "participants.userId": userId,
+    });
+
+    for (const conv of conversations) {
+      if (conv.type === "group") {
+        // Remove user khỏi participants
+        conv.participants = conv.participants.filter(
+          (p) => p.userId.toString() !== userId.toString(),
+        );
+        if (conv.participants.length === 0) {
+          // Nếu không còn ai, xóa conversation
+          await Conversation.findByIdAndDelete(conv._id);
+        } else {
+          // Cập nhật conversation
+          await conv.save();
+        }
+      } else if (conv.type === "direct") {
+        // Xóa luôn direct conversation
+        await Conversation.findByIdAndDelete(conv._id);
+      }
+    }
+
+    // 6. Xóa user
+    await User.findByIdAndDelete(userId);
+
+    return res
+      .status(200)
+      .json({ message: "Tài khoản đã được xóa thành công" });
+  } catch (error) {
+    console.error("Lỗi khi xóa tài khoản", error);
     return res.status(500).json({ message: "Lỗi hệ thống" });
   }
 };
