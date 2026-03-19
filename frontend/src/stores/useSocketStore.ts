@@ -97,6 +97,11 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     socket.on("conversation-deleted", ({ conversationId }) => {
       useChatStore.getState().removeConversation(conversationId);
     });
+
+    // (conversation updated) --> ví dụ user khác rời group (hoặc bị xóa) -> cập nhật state
+    socket.on("conversation-updated", (conversation) => {
+      useChatStore.getState().updateConversation(conversation);
+    });
   },
   // ngắt kết nối khi log out hay rời khỏi app
   disconnectSocket: () => {

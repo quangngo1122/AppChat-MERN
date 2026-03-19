@@ -6,6 +6,7 @@ import Friend from "../models/Friend.js";
 import FriendRequest from "../models/FriendRequest.js";
 import Message from "../models/Message.js";
 import Conversation from "../models/Conversation.js";
+import { io } from "../socket/index.js";
 
 export const authMe = async (req, res) => {
   try {
@@ -200,21 +201,55 @@ export const deleteAccount = async (req, res) => {
     });
 
     for (const conv of conversations) {
+      const participantIds = conv.participants.map((p) => p.userId.toString());
+
       if (conv.type === "group") {
         // Remove user khỏi participants
         conv.participants = conv.participants.filter(
           (p) => p.userId.toString() !== userId.toString(),
         );
-        if (conv.participants.length === 0) {
+
+        if (conv.participants.length <= 1) {
+          // if (conv.participants.length === 0) {
+
           // Nếu không còn ai, xóa conversation
           await Conversation.findByIdAndDelete(conv._id);
+
+          participantIds.forEach((id) => {
+            if (id !== userId.toString()) {
+              io.to(id).emit("conversation-deleted", {
+                conversationId: conv._id.toString(),
+              });
+            }
+          });
         } else {
           // Cập nhật conversation
           await conv.save();
+
+          // Emit tin nhắn cho các member còn lại (còn trong room)
+          const updated = await Conversation.findById(conv._id)
+            .populate("participants.userId", "displayName avatarUrl")
+            .populate("lastMessage.senderId", "displayName avatarUrl")
+            .lean();
+
+          (conv.participants || []).forEach((p) => {
+            const id = p.userId.toString();
+            if (id !== userId.toString()) {
+              io.to(id).emit("conversation-updated", updated);
+            }
+          });
         }
       } else if (conv.type === "direct") {
         // Xóa luôn direct conversation
         await Conversation.findByIdAndDelete(conv._id);
+
+        participantIds.forEach((id) => {
+          if (id !== userId.toString()) {
+            io.to(id).emit("conversation-deleted", {
+              conversationId: conv._id.toString(),
+            });
+          }
+        });
       }
     }
 
