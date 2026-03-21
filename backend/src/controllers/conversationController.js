@@ -20,6 +20,7 @@ export const createConversation = async (req, res) => {
     }
 
     let conversation;
+    let createdNew = false;
 
     if (type === "direct") {
       const participantId = memberIds[0];
@@ -31,6 +32,7 @@ export const createConversation = async (req, res) => {
 
       // nếu 2 người chưa chat nhau lần nào --> tạo phòng chat mới
       if (!conversation) {
+        createdNew = true;
         conversation = new Conversation({
           type: "direct",
           participants: [{ userId }, { userId: participantId }],
@@ -78,10 +80,19 @@ export const createConversation = async (req, res) => {
 
     const formatted = { ...conversation.toObject(), participants };
 
+    // nếu tạo là dạng direct mới: emit event cho người kia
+    if (type === "direct" && createdNew && memberIds.length > 0) {
+      const targetId = memberIds[0];
+      if (targetId.toString() !== userId.toString()) {
+        io.to(targetId).emit("new-conversation", formatted);
+      }
+    }
+
     // nếu tạo là dạng group: emit event cho các thành viên có trong group
     if (type === "group") {
       memberIds.forEach((userId) => {
         io.to(userId).emit("new-group", formatted); // emit event tới room userId
+        io.to(userId).emit("new-conversation", formatted);
       });
     }
 

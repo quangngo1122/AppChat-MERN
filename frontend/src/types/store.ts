@@ -105,6 +105,9 @@ export interface FriendState {
   acceptRequest: (requestId: string) => Promise<void>;
   declineRequest: (requestId: string) => Promise<void>;
 
+  // thông báo sự kiện kết bạn đến đối phương ngay lập tức
+  addReceivedFriendRequest: (request: FriendRequest) => void;
+
   getFriends: () => Promise<void>;
 }
 

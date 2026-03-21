@@ -1,6 +1,9 @@
 import Friend from "../models/Friend.js";
 import User from "../models/User.js";
 import FriendRequest from "../models/FriendRequest.js";
+
+import { io } from "../socket/index.js";
+
 // import { request } from "express";
 
 export const sendFriendRequest = async (req, res) => {
@@ -45,12 +48,28 @@ export const sendFriendRequest = async (req, res) => {
       return res.status(400).json({ message: "Đã có lời mời kết bạn" });
     }
 
-    // mọi thứ ok thì tiến hành tạo lời mời kết bạn
-    const request = await FriendRequest.create({
+    // mọi thứ ok thì tiến hành tạo lời mời kết bạn (new)
+    const createdRequest = await FriendRequest.create({
       from,
       to,
       message,
     });
+
+    // (new) populate for client display (pull lại từ DB để chắc chắn dữ liệu đầy đủ)
+    const request = await FriendRequest.findById(createdRequest._id)
+      .populate("from", "_id username displayName avatarUrl")
+      .populate("to", "_id username displayName avatarUrl")
+      .lean();
+
+    // // mọi thứ ok thì tiến hành tạo lời mời kết bạn (old) --> thiếu thông tin khác, vì request chỉ đang chứa id from, to
+    //     const request = await FriendRequest.create({
+    //       from,
+    //       to,
+    //       message,
+    //     });
+
+    // realtime push cho người nhận nếu đang online
+    io.to(to.toString()).emit("new-friend-request", request);
 
     return res
       .status(201)
@@ -124,7 +143,7 @@ export const declineFriendRequest = async (req, res) => {
         .status(404)
         .json({ message: "Không tìm thấy lời mời kết bạn" });
     }
-    if (request.to.toString() !== userId) {
+    if (request.to.toString() !== userId.toString()) {
       return res
         .status(403)
         .json({ message: "Bạn không có quyền từ chối lời mời này" });

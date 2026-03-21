@@ -3,6 +3,7 @@
 import { create } from "zustand";
 import { io, type Socket } from "socket.io-client";
 import { useAuthStore } from "./useAuthStore";
+import { useFriendStore } from "./useFriendStore";
 import type { SocketState } from "@/types/store";
 import { useChatStore } from "./useChatStore";
 
@@ -93,9 +94,20 @@ export const useSocketStore = create<SocketState>((set, get) => ({
       socket.emit("join-conversation", conversation._id);
     });
 
+    // (new conversation) --> user khác được người kia tạo direct/group mới
+    socket.on("new-conversation", (conversation) => {
+      useChatStore.getState().addConvo(conversation);
+      socket.emit("join-conversation", conversation._id);
+    });
+
     // (conversation deleted) --> user nào nằm trong room đó biết convo bị xoá
     socket.on("conversation-deleted", ({ conversationId }) => {
       useChatStore.getState().removeConversation(conversationId);
+    });
+
+    // (new friend request) --> user nhận được ngay lời mời mới
+    socket.on("new-friend-request", (request) => {
+      useFriendStore.getState().addReceivedFriendRequest(request);
     });
 
     // (conversation updated) --> ví dụ user khác rời group (hoặc bị xóa) -> cập nhật state

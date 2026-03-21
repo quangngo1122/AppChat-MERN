@@ -55,6 +55,12 @@ export const useFriendStore = create<FriendState>((set, get) => ({
     }
   },
 
+  addReceivedFriendRequest: (request) => {
+    set((state) => ({
+      receivedList: [request, ...(state.receivedList || [])],
+    }));
+  },
+
   acceptRequest: async (requestId) => {
     try {
       set({ loading: true });
