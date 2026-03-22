@@ -1,5 +1,6 @@
 import { friendService } from "@/services/friendService";
 import type { FriendState } from "@/types/store";
+import { toast } from "sonner";
 import { create } from "zustand";
 
 export const useFriendStore = create<FriendState>((set, get) => ({
@@ -61,6 +62,12 @@ export const useFriendStore = create<FriendState>((set, get) => ({
     }));
   },
 
+  removeReceivedFriendRequest: (requestId) => {
+    set((state) => ({
+      receivedList: state.receivedList.filter((r) => r._id !== requestId),
+    }));
+  },
+
   acceptRequest: async (requestId) => {
     try {
       set({ loading: true });
@@ -90,6 +97,24 @@ export const useFriendStore = create<FriendState>((set, get) => ({
       set({ loading: false });
     }
   },
+
+  cancelRequest: async (requestId) => {
+    try {
+      set({ loading: true });
+      await friendService.cancelRequest(requestId);
+
+      set((state) => ({
+        sentList: state.sentList.filter((r) => r._id !== requestId),
+      }));
+
+      toast.success("Thu hồi lời mời kết bạn thành công");
+    } catch (error) {
+      console.error("Lỗi xãy ra khi cancelRequest", error);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
   getFriends: async () => {
     try {
       set({ loading: true });

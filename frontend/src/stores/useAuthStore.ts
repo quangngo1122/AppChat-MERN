@@ -102,18 +102,24 @@ export const useAuthStore = create<AuthState>()(
         }
       },
       refresh: async () => {
+        // const { user } = get();
+        // if (!user) return;
+
         try {
           set({ loading: true });
           const { user, fetchMe, setAccessToken } = get(); // lấy user, func fetchMe trong tất cả trường lấy đc từ get()
           const accessToken = await authService.refresh(); // return res.data.accessToken
-          // set({ accessToken: accessToken });
+
           setAccessToken(accessToken);
           if (!user) {
             await fetchMe();
           }
         } catch (error) {
           console.error(error);
-          toast.error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
+          // Chỉ hiển thị toast nếu đã có accessToken trước đó
+          if (get().accessToken) {
+            toast.error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
+          }
           get().clearState();
         } finally {
           set({ loading: false });

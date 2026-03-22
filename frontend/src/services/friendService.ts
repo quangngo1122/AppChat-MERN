@@ -45,6 +45,16 @@ export const friendService = {
     }
   },
 
+  // thu hồi lời mời kết bạn
+  async cancelRequest(requestId: string) {
+    try {
+      await api.delete(`/friends/requests/${requestId}`);
+    } catch (error) {
+      console.error("Lỗi khi thu hồi lời mời kết bạn", error);
+      throw error;
+    }
+  },
+
   // lấy danh sách tất cả bạn bè
   async getFriendList() {
     const res = await api.get("/friends");

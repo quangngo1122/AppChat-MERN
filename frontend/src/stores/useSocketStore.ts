@@ -82,7 +82,8 @@ export const useSocketStore = create<SocketState>((set, get) => ({
         seenBy: conversation.seenBy,
       };
       // cập nhật lại convo trong store
-      useChatStore.getState().updateConversation(updated);
+      // useChatStore.getState().updateConversation(updated);
+      useChatStore.getState().updateConversation(updated as any);
     });
 
     // (new group) --> sự kiện khi tạo convo dạng group
@@ -108,6 +109,11 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     // (new friend request) --> user nhận được ngay lời mời mới
     socket.on("new-friend-request", (request) => {
       useFriendStore.getState().addReceivedFriendRequest(request);
+    });
+
+    // (friend request cancelled) --> user nhận được thông báo lời mời bị thu hồi
+    socket.on("friend-request-cancelled", ({ requestId }) => {
+      useFriendStore.getState().removeReceivedFriendRequest(requestId);
     });
 
     // (conversation updated) --> ví dụ user khác rời group (hoặc bị xóa) -> cập nhật state
