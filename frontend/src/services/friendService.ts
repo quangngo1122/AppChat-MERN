@@ -11,7 +11,8 @@ export const friendService = {
       to,
       message,
     });
-    return res.data.message;
+    // return res.data.message;
+    return res.data.request;
   },
 
   // lấy toàn bộ lời mời kb đã nhận

@@ -100,7 +100,7 @@ export interface FriendState {
   sentList: FriendRequest[]; // đã gửi
 
   searchByUserName: (username: string) => Promise<User | null>; // trả về user / null
-  addFriend: (to: string, message?: string) => Promise<string>;
+  addFriend: (to: string, message?: string) => Promise<FriendRequest>;
 
   getAllFriendRequests: () => Promise<void>;
   acceptRequest: (requestId: string) => Promise<void>;

@@ -72,8 +72,8 @@ const AddFriendModal = () => {
     if (!searchUser) return;
     try {
       // gửi yc kb
-      const message = await addFriend(searchUser._id, data.message.trim());
-      toast.success(message);
+      await addFriend(searchUser._id, data.message.trim());
+      toast.success("Gửi lời mời kết bạn thành công");
 
       handleCancel();
     } catch (error) {

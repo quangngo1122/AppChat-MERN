@@ -28,12 +28,18 @@ export const useFriendStore = create<FriendState>((set, get) => ({
     try {
       set({ loading: true });
       // api add friend
-      const resultMessage = await friendService.sendFriendRequest(to, message);
+      const request = await friendService.sendFriendRequest(to, message);
 
-      return resultMessage;
+      // thêm vào sentList ngay lập tức
+      set((state) => ({
+        sentList: [request, ...(state.sentList || [])],
+      }));
+
+      return request;
     } catch (error) {
       console.error("Lỗi xãy ra khi addFriend");
-      return "Lỗi xãy ra khi gửi kết bạn, hãy thử lại"; // return message hiển thị UI
+      // return "Lỗi xãy ra khi gửi kết bạn, hãy thử lại"; // return message hiển thị UI
+      throw error; // throw error để component handle
     } finally {
       set({ loading: false });
     }
