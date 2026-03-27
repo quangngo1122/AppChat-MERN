@@ -53,6 +53,14 @@ export const chatService = {
     return res.data.message;
   },
 
+  // upload ảnh cho tin nhắn
+  async uploadImage(formData: FormData) {
+    const res = await api.post("/messages/uploadImage", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return res.data.imageUrl;
+  },
+
   async markAsSeen(conversationId: string) {
     const res = await api.patch(`/conversations/${conversationId}/seen`);
     return res.data;

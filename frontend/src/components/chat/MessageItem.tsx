@@ -5,6 +5,7 @@ import type { Conversation, Message, Participant } from "@/types/chat";
 import UserAvatar from "./UserAvatar";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
+import { useState } from "react";
 
 interface MessageItemProps {
   message: Message; // một tin nhắn cụ thể
@@ -23,6 +24,8 @@ const MessageItem = ({
 }: MessageItemProps) => {
   // const prev = messages[index - 1];
   const prev = index + 1 < messages.length ? messages[index + 1] : undefined;
+
+  const [previewImg, setPreviewImg] = useState<string | null>(null);
 
   const isShowTime =
     index === 0 || // tin nhắn đầu
@@ -70,18 +73,28 @@ const MessageItem = ({
             message.isOwn ? "items-end" : "items-start",
           )}
         >
-          <Card
-            className={cn(
-              "p-3",
-              message.isOwn
-                ? "chat-bubble-sent border-0"
-                : "chat-bubble-received",
-            )}
-          >
-            <p className="text-sm leading-relaxed wrap-break-word">
-              {message.content}
-            </p>
-          </Card>
+          {message.imgUrl ? (
+            <img
+              src={message.imgUrl}
+              alt="Message image"
+              className="max-w-64 max-h-64 rounded-lg cursor-pointer shadow-sm"
+              // onClick={() => window.open(message.imgUrl!, "_blank")}
+              onClick={() => setPreviewImg(message.imgUrl!)}
+            />
+          ) : (
+            <Card
+              className={cn(
+                "p-3",
+                message.isOwn
+                  ? "chat-bubble-sent border-0"
+                  : "chat-bubble-received",
+              )}
+            >
+              <p className="text-sm leading-relaxed wrap-break-word">
+                {message.content}
+              </p>
+            </Card>
+          )}
 
           {/* seen - delivered */}
           {message.isOwn && message._id === selectedConvo.lastMessage?._id && (
@@ -104,6 +117,21 @@ const MessageItem = ({
         <span className="flex text-xs justify-center text-muted-foreground px-1">
           {formatMessageTime(new Date(message.createdAt))}
         </span>
+      )}
+
+      {previewImg && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center
+               bg-black/30 backdrop-blur-md"
+          onClick={() => setPreviewImg(null)}
+        >
+          <img
+            src={previewImg}
+            alt="Preview"
+            className="max-w-[90%] max-h-[90%] min-w-[50%] min-h-[50%] rounded-lg shadow-lg"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
       )}
     </>
   );

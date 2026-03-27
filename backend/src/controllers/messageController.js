@@ -5,16 +5,17 @@ import {
   updateConversationAfterCreateMessage,
 } from "../utils/messageHelper.js";
 import { io } from "../socket/index.js";
+import { uploadImagefromBuffer } from "../middleware/uploadMiddleware.js";
 
 // gửi tin nhắn cho cá nhân
 export const sendDirectMessage = async (req, res) => {
   try {
-    const { recipientId, content, conversationId } = req.body; // id người nhận, nd, id cuộ hội thoại
+    const { recipientId, content, conversationId, imgUrl } = req.body; // id người nhận, nd, id cuộ hội thoại
     const senderId = req.user._id; // id người dùng gửi tin nhắn (hiểu đơn giản là mình)
 
     let conversation;
 
-    if (!content) {
+    if (!content && !imgUrl) {
       return res.status(400).json({ message: "Thiếu nội dung" });
     }
     if (conversationId) {
@@ -38,6 +39,7 @@ export const sendDirectMessage = async (req, res) => {
       conversationId: conversation._id,
       senderId,
       content,
+      imgUrl,
     });
 
     updateConversationAfterCreateMessage(conversation, message, senderId);
@@ -56,11 +58,11 @@ export const sendDirectMessage = async (req, res) => {
 // gửi tin nhắn nhóm
 export const sendGroupMessage = async (req, res) => {
   try {
-    const { conversationId, content } = req.body;
+    const { conversationId, content, imgUrl } = req.body;
     const senderId = req.user._id;
     const conversation = req.conversation; // từ checkGroupMembership middleware
 
-    if (!content) {
+    if (!content && !imgUrl) {
       return res.status(400).json("Thiếu nội dung");
     }
 
@@ -69,6 +71,7 @@ export const sendGroupMessage = async (req, res) => {
       conversationId,
       senderId,
       content,
+      imgUrl,
     });
 
     // cap nhat lai thong tin cuoc tro truyen
@@ -82,5 +85,31 @@ export const sendGroupMessage = async (req, res) => {
   } catch (error) {
     console.error("Lỗi xãy ra khi gửi tin nhắn nhóm", error);
     return res.status(500).json({ message: "Lỗi hệ thống" });
+  }
+};
+
+// upload ảnh cho tin nhắn
+export const uploadImage = async (req, res) => {
+  try {
+    const file = req.file;
+
+    if (!file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    const result = await uploadImagefromBuffer(file.buffer, {
+      // ghi đè setting
+      folder: "q_chat/messages",
+      resource_type: "image",
+
+      // transformation: [{ width: 300, height: 200, crop: "fill" }],
+
+      transformation: [{ height: 200, crop: "fill" }],
+    });
+
+    return res.status(200).json({ imageUrl: result.secure_url });
+  } catch (error) {
+    console.error("Lỗi xãy ra khi upload ảnh tin nhắn", error);
+    return res.status(500).json({ message: "Upload ảnh thất bại" });
   }
 };
