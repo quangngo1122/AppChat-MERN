@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useChatStore } from "@/stores/useChatStore";
 import type { Conversation } from "@/types/chat";
 import { SidebarTrigger } from "../ui/sidebar";
@@ -6,6 +7,8 @@ import { Separator } from "../ui/separator";
 import UserAvatar from "./UserAvatar";
 import StatusBadge from "./StatusBadge";
 import GroupChatAvatar from "./GroupChatAvatar";
+import UserInfoDialog from "./UserInfoDialog";
+import GroupMembersDialog from "./GroupMembersDialog";
 import { useSocketStore } from "@/stores/useSocketStore";
 
 const ChatWindowHeader = ({ chat }: { chat?: Conversation }) => {
@@ -14,6 +17,9 @@ const ChatWindowHeader = ({ chat }: { chat?: Conversation }) => {
   const { user } = useAuthStore();
 
   const { onlineUsers } = useSocketStore();
+
+  const [openUserInfo, setOpenUserInfo] = useState(false);
+  const [openGroupInfo, setOpenGroupInfo] = useState(false);
 
   let otherUser;
 
@@ -48,15 +54,18 @@ const ChatWindowHeader = ({ chat }: { chat?: Conversation }) => {
         />
         <div className="p-2 w-full flex items-center gap-3">
           {/* avartar */}
-          <div className="relative">
-            {chat.type === "direct" ? (
-              <>
+          {chat.type === "direct" ? (
+            <button
+              type="button"
+              onClick={() => setOpenUserInfo(true)}
+              className="flex items-center gap-2 rounded-3xl p-2 transition hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              <div className="relative">
                 <UserAvatar
                   type={"sidebar"}
                   name={otherUser?.displayName || "QChat"}
                   avatarUrl={otherUser?.avatarUrl || undefined}
                 />
-                {/* note: nào kết nối socket io thì sửa lại status theo đó */}
                 <StatusBadge
                   status={
                     onlineUsers.includes(otherUser?._id ?? "")
@@ -64,20 +73,41 @@ const ChatWindowHeader = ({ chat }: { chat?: Conversation }) => {
                       : "offline"
                   }
                 />
-              </>
-            ) : (
+              </div>
+              <h2 className="font-semibold text-foreground">
+                {otherUser?.displayName}
+              </h2>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setOpenGroupInfo(true)}
+              className="flex items-center gap-3 rounded-3xl p-2 transition hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-ring"
+            >
               <GroupChatAvatar
                 participants={chat.participants}
                 type="sidebar"
               />
-            )}
-          </div>
-
-          {/* name */}
-          <h2 className="font-semibold text-foreground">
-            {chat.type === "direct" ? otherUser?.displayName : chat.group?.name}
-          </h2>
+              <h2 className="font-semibold text-foreground">
+                {chat.group?.name}
+              </h2>
+            </button>
+          )}
         </div>
+        {otherUser && (
+          <UserInfoDialog
+            open={openUserInfo}
+            setOpen={setOpenUserInfo}
+            participant={otherUser}
+          />
+        )}
+        {chat.type === "group" && (
+          <GroupMembersDialog
+            open={openGroupInfo}
+            setOpen={setOpenGroupInfo}
+            conversation={chat}
+          />
+        )}
       </div>
     </header>
   );

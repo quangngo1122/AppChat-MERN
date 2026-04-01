@@ -23,6 +23,14 @@ export const userService = {
     return res.data.user;
   },
 
+  getUserById: async (id: string) => {
+    const res = await api.get(`/users/${id}`);
+    if (res.status >= 400) {
+      throw new Error(res.data.message || "Không thể lấy thông tin người dùng");
+    }
+    return res.data.user;
+  },
+
   changePassword: async (
     currentPassword: string,
     newPassword: string,

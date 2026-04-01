@@ -2,6 +2,7 @@ import express from "express";
 import {
   authMe,
   searchUserByUsername,
+  getUserById,
   test,
   uploadAvatar,
   updatePersonalInfo,
@@ -28,6 +29,8 @@ router.delete("/me", protectedRoute, deleteAccount);
 router.get("/test", test);
 
 router.get("/search", searchUserByUsername);
+
+router.get("/:id", protectedRoute, getUserById);
 
 // middle sẽ tìm trường có tên file trong res body -> đọc file vào memory
 // sau đó gán dữ liệu thô vào res.file trước khi chuyển qua hàm controler

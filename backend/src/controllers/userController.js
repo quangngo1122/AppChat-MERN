@@ -42,6 +42,30 @@ export const searchUserByUsername = async (req, res) => {
   }
 };
 
+// lấy thông tin user qua id truyền vào
+export const getUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ message: "Thiếu Id user" });
+    }
+    // lấy ra các thông tin cụ thể
+    const user = await User.findById(id).select(
+      "_id displayName username email phone bio avatarUrl",
+    );
+    if (!user) {
+      return res.status(404).json({ message: "Không tìm thấy user" });
+    }
+
+    // lấy trả về thông tin user
+    return res.status(200).json({ user });
+  } catch (error) {
+    console.error("Lỗi khi lấy user theo id", error);
+    return res.status(500).json({ message: "Lỗi hệ thống" });
+  }
+};
+
 export const uploadAvatar = async (req, res) => {
   try {
     const file = req.file; // middleware
