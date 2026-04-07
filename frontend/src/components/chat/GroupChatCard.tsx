@@ -1,9 +1,12 @@
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useChatStore } from "@/stores/useChatStore";
+import { useState } from "react";
 import type { Conversation } from "@/types/chat";
 import ChatCard from "./ChatCard";
 import UnreadCountBadge from "./UnreadCountBadge";
 import GroupChatAvatar from "./GroupChatAvatar";
+import AddGroupMembersModal from "./AddGroupMembersModal";
+import { DropdownMenuItem } from "../ui/dropdown-menu";
 import { toast } from "sonner";
 
 const GroupChatCard = ({ convo }: { convo: Conversation }) => {
@@ -44,31 +47,49 @@ const GroupChatCard = ({ convo }: { convo: Conversation }) => {
     }
   };
 
+  const [openAddMembers, setOpenAddMembers] = useState(false);
+
   return (
-    <ChatCard
-      convoId={convo._id}
-      name={name}
-      timestamp={
-        convo.lastMessage?.createdAt
-          ? new Date(convo.lastMessage?.createdAt)
-          : undefined
-      }
-      isActive={activeConversationId === convo._id} // ktra xem có đang mở convo này ko
-      onSelect={handleSelectConversation}
-      onDelete={handleDelete}
-      unreadCount={unreadCount}
-      leftSection={
-        <>
-          {unreadCount > 0 && <UnreadCountBadge unreadCount={unreadCount} />}
-          <GroupChatAvatar participants={convo.participants} type="chat" />
-        </>
-      }
-      subtitle={
-        <p className="text-sm truncate text-muted-foreground">
-          {convo.participants.length} thành viên
-        </p>
-      }
-    />
+    <>
+      <ChatCard
+        convoId={convo._id}
+        name={name}
+        timestamp={
+          convo.lastMessage?.createdAt
+            ? new Date(convo.lastMessage?.createdAt)
+            : undefined
+        }
+        isActive={activeConversationId === convo._id} // ktra xem có đang mở convo này ko
+        onSelect={handleSelectConversation}
+        onDelete={handleDelete}
+        menuItems={
+          <DropdownMenuItem
+            onClick={() => {
+              setOpenAddMembers(true);
+            }}
+          >
+            <span>Thêm thành viên</span>
+          </DropdownMenuItem>
+        }
+        unreadCount={unreadCount}
+        leftSection={
+          <>
+            {unreadCount > 0 && <UnreadCountBadge unreadCount={unreadCount} />}
+            <GroupChatAvatar participants={convo.participants} type="chat" />
+          </>
+        }
+        subtitle={
+          <p className="text-sm truncate text-muted-foreground">
+            {convo.participants.length} thành viên
+          </p>
+        }
+      />
+      <AddGroupMembersModal
+        open={openAddMembers}
+        setOpen={setOpenAddMembers}
+        conversation={convo}
+      />
+    </>
   );
 };
 

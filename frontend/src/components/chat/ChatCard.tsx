@@ -20,6 +20,7 @@ interface ChatCardProps {
   unreadCount?: number; // số tin chưa đọc
   leftSection: React.ReactNode; // avt
   subtitle: React.ReactNode; // review tin nhắn cuối
+  menuItems?: React.ReactNode;
   onDelete?: (id: string) => void; // hàm gọi khi nhấn xóa
 }
 
@@ -32,6 +33,7 @@ const ChatCard = ({
   unreadCount,
   leftSection,
   subtitle,
+  menuItems,
   onDelete,
 }: ChatCardProps) => {
   return (
@@ -64,12 +66,11 @@ const ChatCard = ({
             <div className="flex items-center gap-1 flex-1 min-w-0">
               {subtitle}
             </div>
-            {onDelete ? (
+            {onDelete || menuItems ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
                     onClick={(e) => e.stopPropagation()}
-                    // className="size-4 text-muted-foreground opacity-0 group-hover:opacity-100 hover:size-5 transition-smooth"
                     className="size-4 text-muted-foreground opacity-100 md:opacity-0 md:group-hover:opacity-100 hover:size-5 transition-smooth"
                   >
                     <MoreHorizontal />
@@ -77,10 +78,13 @@ const ChatCard = ({
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent side="right" className="w-auto">
-                  <DropdownMenuItem onClick={() => onDelete(convoId)}>
-                    <Trash2 className="text-muted-foreground mr-2" />
-                    <span>Xóa cuộc trò chuyện</span>
-                  </DropdownMenuItem>
+                  {menuItems}
+                  {onDelete && (
+                    <DropdownMenuItem onClick={() => onDelete(convoId)}>
+                      <Trash2 className="text-muted-foreground mr-2" />
+                      <span>Xóa cuộc trò chuyện</span>
+                    </DropdownMenuItem>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (

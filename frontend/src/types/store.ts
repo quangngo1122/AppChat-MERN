@@ -78,6 +78,10 @@ export interface ChatState {
     name: string,
     memberIds: string[],
   ) => Promise<void>;
+  addGroupMembers: (
+    conversationId: string,
+    memberIds: string[],
+  ) => Promise<void>;
   deleteConversation: (conversationId: string) => Promise<void>;
   removeConversation: (conversationId: string) => void;
 }

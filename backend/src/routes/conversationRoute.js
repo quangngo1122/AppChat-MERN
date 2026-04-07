@@ -5,6 +5,7 @@ import {
   getMessage,
   maskAsSeen,
   deleteConversation,
+  addGroupMembers,
 } from "../controllers/conversationController.js";
 import { checkFriendship } from "../middleware/friendMiddleware.js";
 
@@ -15,6 +16,7 @@ router.get("/", getConversation);
 router.get("/:conversationId/messages", getMessage);
 
 router.patch("/:conversationId/seen", maskAsSeen); // update
+router.patch("/:conversationId/members", checkFriendship, addGroupMembers);
 
 // xoá cuộc trò chuyện (cả conversation lẫn messages)
 router.delete("/:conversationId", deleteConversation);

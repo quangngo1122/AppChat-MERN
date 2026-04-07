@@ -259,6 +259,22 @@ export const useChatStore = create<ChatState>()(
         }
       },
 
+      addGroupMembers: async (conversationId: string, memberIds: string[]) => {
+        try {
+          set({ loading: true });
+          const conversation = await chatService.addGroupMembers(
+            conversationId,
+            memberIds,
+          );
+          get().updateConversation(conversation);
+        } catch (error) {
+          console.error("Lỗi khi thêm thành viên vào nhóm", error);
+          throw error;
+        } finally {
+          set({ loading: false });
+        }
+      },
+
       removeConversation: (conversationId) => {
         // helper to clear conversation locally without network request
         set((state) => {

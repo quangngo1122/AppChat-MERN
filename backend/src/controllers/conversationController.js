@@ -103,6 +103,101 @@ export const createConversation = async (req, res) => {
   }
 };
 
+export const addGroupMembers = async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+    const { memberIds } = req.body;
+    const userId = req.user._id;
+
+    if (!memberIds || !Array.isArray(memberIds) || memberIds.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Cần cung cấp danh sách memberIds" });
+    }
+
+    // lấy ra conversation hại tiện
+    const conversation = await Conversation.findById(conversationId);
+
+    if (!conversation) {
+      return res.status(404).json({ message: "Conversation không tồn tại" });
+    }
+    if (conversation.type !== "group") {
+      return res.status(400).json({
+        message: "Chỉ có thể thêm thành viên vào cuộc trò chuyện nhóm",
+      });
+    }
+
+    // participant của cuộc hội thoại của bản thân
+    const isParticipant = conversation.participants.some(
+      (p) => p.userId.toString() === userId.toString(),
+    );
+
+    if (!isParticipant) {
+      return res
+        .status(403)
+        .json({ message: "Bạn không có quyền thêm thành viên vào nhóm này" });
+    }
+
+    // lấy danh sách member tồn tại - member hiện tại
+    const existingMemberIds = conversation.participants.map((p) =>
+      p.userId.toString(),
+    );
+
+    // loại những user đã có để tạo danh sách thêm bạn bè chưa đc thêm
+    const uniqueNewMemberIds = Array.from(
+      new Set(memberIds.map((id) => id.toString())),
+    ).filter((id) => !existingMemberIds.includes(id));
+
+    if (uniqueNewMemberIds.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Không có thành viên mới để thêm" });
+    }
+
+    // thêm user bào conversation rồi lưu vào đb
+    uniqueNewMemberIds.forEach((memberId) => {
+      conversation.participants.push({ userId: memberId });
+    });
+    await conversation.save();
+
+    // lấy dữ liệu cụ thể
+    await conversation.populate([
+      { path: "participants.userId", select: "displayName avatarUrl" },
+      { path: "seenBy", select: "displayName avatarUrl" },
+      { path: "lastMessage.senderId", select: "displayName avatarUrl" },
+    ]);
+
+    // forrmat lại cho frontend dể dùng
+    const participants = (conversation.participants || []).map((p) => ({
+      _id: p.userId?._id,
+      displayName: p.userId?.displayName,
+      avatarUrl: p.userId?.avatarUrl ?? null,
+      joinedAt: p.joinedAt,
+    }));
+    const formatted = { ...conversation.toObject(), participants };
+
+    // thêm sự kiện realtime của member mới
+    uniqueNewMemberIds.forEach((id) => {
+      io.to(id).emit("new-group", formatted);
+      io.to(id).emit("new-conversation", formatted);
+    });
+
+    // update sự kiện cho member khác
+    conversation.participants.forEach((p) => {
+      const participantId = p.userId.toString();
+      if (!uniqueNewMemberIds.includes(participantId)) {
+        io.to(participantId).emit("conversation-updated", formatted);
+      }
+    });
+
+    // trả dữ liệu đã forrmat vào
+    return res.status(200).json({ conversation: formatted });
+  } catch (error) {
+    console.error("Lỗi khi thêm thành viên vào nhóm", error);
+    return res.status(500).json({ message: "Lỗi hệ thống" });
+  }
+};
+
 // Lấy danh sách các cuộc trò chuyện (conversations) mà user hiện tại đang tham gia --> Trả về dữ liệu đã được format lại
 export const getConversation = async (req, res) => {
   try {

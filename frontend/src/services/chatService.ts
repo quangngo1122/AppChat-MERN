@@ -76,6 +76,13 @@ export const chatService = {
     return res.data.conversation;
   },
 
+  async addGroupMembers(conversationId: string, memberIds: string[]) {
+    const res = await api.patch(`/conversations/${conversationId}/members`, {
+      memberIds,
+    });
+    return res.data.conversation;
+  },
+
   async deleteConversation(conversationId: string) {
     const res = await api.delete(`/conversations/${conversationId}`);
     return res.data;
