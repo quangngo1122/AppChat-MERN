@@ -6,6 +6,7 @@ import UserAvatar from "./UserAvatar";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { useState } from "react";
+import ImageMessageSkeleton from "../skeleton/ImageMessageSkeleton";
 
 interface MessageItemProps {
   message: Message; // một tin nhắn cụ thể
@@ -74,13 +75,17 @@ const MessageItem = ({
           )}
         >
           {message.imgUrl ? (
-            <img
-              src={message.imgUrl}
-              alt="Message image"
-              className="max-w-64 max-h-64 rounded-lg cursor-pointer shadow-sm"
-              // onClick={() => window.open(message.imgUrl!, "_blank")}
-              onClick={() => setPreviewImg(message.imgUrl!)}
-            />
+            message.isUploading ? (
+              <ImageMessageSkeleton />
+            ) : (
+              <img
+                src={message.imgUrl}
+                alt="Message image"
+                className="max-w-64 max-h-64 rounded-lg cursor-pointer shadow-sm"
+                // onClick={() => window.open(message.imgUrl!, "_blank")}
+                onClick={() => setPreviewImg(message.imgUrl!)}
+              />
+            )
           ) : (
             <Card
               className={cn(
@@ -107,7 +112,7 @@ const MessageItem = ({
                   : "bg-muted text-muted-foreground",
               )}
             >
-              {lastMessageStatus}
+              {lastMessageStatus === "seen" ? "Đã xem" : "Đã gửi"}
             </Badge>
           )}
         </div>

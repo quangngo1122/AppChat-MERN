@@ -1,7 +1,7 @@
-// import { Skeleton } from "../ui/skeleton";
-
 const ImageMessageSkeleton = () => {
-  return <></>;
+  return (
+    <div className="w-64 h-64 bg-muted rounded-lg animate-pulse shadow-sm" />
+  );
 };
 
 export default ImageMessageSkeleton;

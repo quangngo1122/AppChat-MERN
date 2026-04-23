@@ -305,6 +305,56 @@ export const useChatStore = create<ChatState>()(
           set({ loading: false });
         }
       },
+
+      addUploadingMessage: (
+        conversationId: string,
+        tempId: string,
+        imgUrl: string,
+      ) => {
+        const { user } = useAuthStore.getState();
+        if (!user) return;
+
+        const pendingMessage = {
+          _id: tempId,
+          conversationId,
+          senderId: user._id,
+          content: null,
+          imgUrl,
+          createdAt: new Date().toISOString(),
+          isOwn: true,
+          isUploading: true,
+        };
+
+        set((state) => {
+          const prevItems = state.messages[conversationId]?.items ?? [];
+          return {
+            messages: {
+              ...state.messages,
+              [conversationId]: {
+                items: [...prevItems, pendingMessage],
+                hasMore: state.messages[conversationId]?.hasMore ?? false,
+                nextCursor: state.messages[conversationId]?.nextCursor,
+              },
+            },
+          };
+        });
+      },
+
+      removeUploadingMessage: (conversationId: string, tempId: string) => {
+        set((state) => {
+          const prevItems = state.messages[conversationId]?.items ?? [];
+          return {
+            messages: {
+              ...state.messages,
+              [conversationId]: {
+                items: prevItems.filter((m) => m._id !== tempId),
+                hasMore: state.messages[conversationId]?.hasMore ?? false,
+                nextCursor: state.messages[conversationId]?.nextCursor,
+              },
+            },
+          };
+        });
+      },
     }),
     {
       name: "chat-storage",

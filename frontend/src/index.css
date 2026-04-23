@@ -20,13 +20,16 @@
 
     /* Primary */
     /* Tím */
-    --primary: 271 79% 47%;
+    --primary: 233 95% 47%;
+    /* --primary: 271 79% 47%; */
     --primary-foreground: 210 40% 96.1%; /*slate-100*/
     /* Hồng */
-    --primary-glow: 320 100% 70%;
+    --primary-glow: 195 100% 70%;
+    /* --primary-glow: 320 100% 70%; */
 
     /* Secondary - lavender */
-    --secondary: 270 50% 92%;
+    --secondary: 233 50% 92%;
+    /* --secondary: 270 50% 92%; */
     --secondary-foreground: 280 100% 40%;
 
     /* Muted */
@@ -75,8 +78,9 @@
     );
     --gradient-chat: linear-gradient(
       135deg,
-      hsl(280, 100%, 65%),
-      hsl(320, 100%, 70%)
+      hsl(233, 100%, 65%),
+      hsl(195, 100%, 70%) /* hsl(280, 100%, 65%),
+      hsl(320, 100%, 70%) */
     );
     --gradient-accent: linear-gradient(
       90deg,
@@ -94,7 +98,7 @@
     --gradient-purple: radial-gradient(
       125% 125% at 50% 10%,
       hsla(0, 0%, 100%, 1) 40%,
-      hsla(262, 83%, 58%, 0.5) 100%
+      hsla(240, 82%, 48%, 0.5) 100% /* hsla(262, 83%, 58%, 0.5) 100% */
     );
 
     /* Shadows */
@@ -135,9 +139,11 @@
     --popover: 240 15% 12%;
     --popover-foreground: 250 100% 95%;
 
-    --primary: 280 100% 70%;
+    --primary: 242 100% 70%;
+    /* --primary: 280 100% 70%; */
     --primary-foreground: 240 15% 8%;
-    --primary-glow: 320 100% 80%;
+    --primary-glow: 195 100% 80%;
+    /* --primary-glow: 320 100% 80%; */
 
     --secondary: 270 20% 20%;
     --secondary-foreground: 280 100% 80%;
@@ -169,13 +175,15 @@
     /* Dark mode gradients */
     --gradient-primary: linear-gradient(
       135deg,
-      hsl(280, 100%, 70%),
-      hsl(320, 100%, 80%)
+      hsl(242, 100%, 70%),
+      hsl(195, 100%, 80%) /* hsl(280, 100%, 70%),
+      hsl(320, 100%, 80%) */
     );
     --gradient-chat: linear-gradient(
       135deg,
-      hsl(280, 100%, 70%),
-      hsl(320, 100%, 75%)
+      hsl(242, 100%, 70%),
+      hsl(195, 100%, 75%) /* hsl(280, 100%, 70%),
+      hsl(320, 100%, 75%) */
     );
     --gradient-accent: linear-gradient(
       90deg,
@@ -211,6 +219,16 @@
 
   body {
     @apply text-slate-800 dark:text-slate-200 bg-background;
+  }
+  .glass-card {
+    background: rgba(255, 255, 255, 0.1); /* lớp trong suốt */
+    backdrop-filter: blur(10px); /* hiệu ứng mờ thần kỳ */
+    -webkit-backdrop-filter: blur(10px); /* cho Safari */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    color: #fff;
   }
 }
 

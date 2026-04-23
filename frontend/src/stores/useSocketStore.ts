@@ -43,7 +43,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
 
       // viết lại lastMessage theo fomat fontend
       const lastMessage = {
-        _if: conversation.lastMessage._id,
+        _id: conversation.lastMessage._id,
         content: conversation.lastMessage.content,
         createdAt: conversation.lastMessage.createdAt,
         sender: {

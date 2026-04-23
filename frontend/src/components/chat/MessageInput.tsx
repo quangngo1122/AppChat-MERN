@@ -18,7 +18,15 @@ const MessageInput = ({ selectedConvo }: { selectedConvo: Conversation }) => {
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { sendDirectMessage, sendGroupMessage } = useChatStore();
+  // const { sendDirectMessage, sendGroupMessage } = useChatStore();
+
+  const {
+    sendDirectMessage,
+    sendGroupMessage,
+    addUploadingMessage,
+    removeUploadingMessage,
+    activeConversationId,
+  } = useChatStore();
 
   if (!user) return;
 
@@ -78,19 +86,41 @@ const MessageInput = ({ selectedConvo }: { selectedConvo: Conversation }) => {
     setSelectedImage(file);
     setIsUploading(true);
 
+    // tạo temporary id cho pending message
+    const tempId = `temp-${Date.now()}`;
+
+    // tạo object URL để preview ảnh đang upload
+    const previewUrl = URL.createObjectURL(file);
+
+    // thêm pending message vào store
+    if (activeConversationId) {
+      addUploadingMessage(activeConversationId, tempId, previewUrl);
+    }
+
     try {
       const formData = new FormData();
       formData.append("file", file);
 
       const imgUrl = await chatService.uploadImage(formData);
 
+      // xóa pending message
+      if (activeConversationId) {
+        removeUploadingMessage(activeConversationId, tempId);
+      }
+
       // gửi message với ảnh
       await sendMessage(imgUrl);
     } catch (error) {
       console.error("Lỗi upload ảnh:", error);
+      // xóa pending message khi lỗi
+      if (activeConversationId) {
+        removeUploadingMessage(activeConversationId, tempId);
+      }
       toast.error("Lỗi khi upload ảnh!");
     } finally {
       setIsUploading(false);
+      // cleanup preview URL
+      URL.revokeObjectURL(previewUrl);
     }
   };
 

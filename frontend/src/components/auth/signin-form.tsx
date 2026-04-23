@@ -49,7 +49,7 @@ export function SigninForm({
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center gap-2">
                 <a href="/" className="mx-auto block w-fit text-center">
-                  <img src="/logo.svg" alt="logo" />
+                  <img src="/vite.svg" alt="logo" />
                 </a>
                 <h1 className="text-2xl font-bold">Chào mừng quay lại</h1>
                 <p className="text-muted-foreground text-balance">

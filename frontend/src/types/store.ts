@@ -84,6 +84,12 @@ export interface ChatState {
   ) => Promise<void>;
   deleteConversation: (conversationId: string) => Promise<void>;
   removeConversation: (conversationId: string) => void;
+  addUploadingMessage: (
+    conversationId: string,
+    tempId: string,
+    imgUrl: string,
+  ) => void;
+  removeUploadingMessage: (conversationId: string, tempId: string) => void;
 }
 
 export interface SocketState {
