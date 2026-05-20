@@ -44,7 +44,7 @@ const PrivacySettings = () => {
 
               <Button
                 variant="outline"
-                className="cursor-pointer w-full justify-start glass-light border-border/30 hover:text-info"
+                className="cursor-not-allowed w-full justify-start glass-light border-border/30 hover:text-info"
               >
                 <Bell className="h-4 w-4 mr-2" />
                 Cài đặt thông báo
@@ -52,7 +52,7 @@ const PrivacySettings = () => {
 
               <Button
                 variant="outline"
-                className="cursor-pointer w-full justify-start glass-light border-border/30 hover:text-destructive"
+                className="cursor-not-allowed w-full justify-start glass-light border-border/30 hover:text-destructive"
               >
                 <ShieldBan className="size-4 mr-2" />
                 Chặn & Báo cáo

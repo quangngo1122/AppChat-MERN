@@ -8,6 +8,7 @@ import GroupChatAvatar from "./GroupChatAvatar";
 import AddGroupMembersModal from "./AddGroupMembersModal";
 import { DropdownMenuItem } from "../ui/dropdown-menu";
 import { toast } from "sonner";
+import { SmilePlus } from "lucide-react";
 
 const GroupChatCard = ({ convo }: { convo: Conversation }) => {
   const { user } = useAuthStore();
@@ -68,6 +69,7 @@ const GroupChatCard = ({ convo }: { convo: Conversation }) => {
               setOpenAddMembers(true);
             }}
           >
+            <SmilePlus className="text-muted-foreground mr-2" />
             <span>Thêm thành viên</span>
           </DropdownMenuItem>
         }
