@@ -13,14 +13,15 @@ import { UserPlus, Users } from "lucide-react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import type { Friend } from "@/types/user";
-import InviteSuggestionList from "../newGroupChat/InviteSuggestionList";
-import SelectedUsersList from "../newGroupChat/SelectedUsersList";
+// import InviteSuggestionList from "../newGroupChat/InviteSuggestionList";
+// import SelectedUsersList from "../newGroupChat/SelectedUsersList";
+import FriendInvitePicker from "../newGroupChat/FriendInvitePicker";
 import { toast } from "sonner";
 import { useChatStore } from "@/stores/useChatStore";
 
 const NewGroupChatModal = () => {
   const [groupName, setGroupName] = useState(""); // tên nhóm
-  const [search, setSearch] = useState(""); // lưu giá trị ô tìm kiếm bạn bè
+  // const [search, setSearch] = useState(""); // lưu giá trị ô tìm kiếm bạn bè
 
   const { friends, getFriends } = useFriendStore();
 
@@ -48,7 +49,8 @@ const NewGroupChatModal = () => {
       );
 
       // reset dữ liệu đã chọn
-      setSearch("");
+      // setSearch("");
+      setGroupName("");
       setInvitedUsers([]);
     } catch (error) {
       console.error(
@@ -59,23 +61,25 @@ const NewGroupChatModal = () => {
   };
 
   // lọc những U có tên bắt đầu bằng từ khóa đang gõ
-  const filteredFriends = friends.filter(
-    (friend) =>
-      friend.displayName
-        .toLocaleLowerCase()
-        .includes(search.toLocaleLowerCase()) && // kiểm tra trong danh sách xem cái nào có chứa từ khóa đang search ko
-      !invitedUsers.some((u) => u._id === friend._id), // và chỉ hiển thị các user chưa chọn trước đó thôi
-  );
+  // const filteredFriends = friends.filter(
+  //   (friend) =>
+  //     friend.displayName
+  //       .toLocaleLowerCase()
+  //       .includes(search.toLocaleLowerCase()) && // kiểm tra trong danh sách xem cái nào có chứa từ khóa đang search ko
+  //     !invitedUsers.some((u) => u._id === friend._id), // và chỉ hiển thị các user chưa chọn trước đó thôi
+  // );
 
   // thêm thứ đã chọn vào mảng user đc chọn
   const handleSelectFriend = (friend: Friend) => {
-    setInvitedUsers([...invitedUsers, friend]);
-    setSearch("");
+    // setInvitedUsers([...invitedUsers, friend]);
+    // setSearch("");
+    setInvitedUsers((prev) => [...prev, friend]);
   };
 
   // giữ lại tất cả id khác Id mình muốn xóa
   const handleRemoveFriend = (friend: Friend) => {
-    setInvitedUsers(invitedUsers.filter((u) => u._id !== friend._id));
+    // setInvitedUsers(invitedUsers.filter((u) => u._id !== friend._id));
+    setInvitedUsers((prev) => prev.filter((u) => u._id !== friend._id));
   };
 
   return (
@@ -91,7 +95,7 @@ const NewGroupChatModal = () => {
           <span className="sr-only">Tạo nhóm</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-106.25 border-none">
+      <DialogContent className="sm:max-w-106.25 border-none max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="capitalize">tạo nhóm chat mới</DialogTitle>
         </DialogHeader>
@@ -112,8 +116,7 @@ const NewGroupChatModal = () => {
             />
           </div>
 
-          {/* mời thành viên */}
-          <div className="space-y-2 ">
+          {/* <div className="space-y-2 ">
             <Label htmlFor="invite" className="text-sm font-semibold">
               Mời thành viên
             </Label>
@@ -123,8 +126,7 @@ const NewGroupChatModal = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-
-            {/* Danh sách gợi ý theo từ khóa tìm kiếm */}
+            
             {search && filteredFriends.length > 0 && (
               <InviteSuggestionList
                 filteredFriends={filteredFriends}
@@ -132,12 +134,19 @@ const NewGroupChatModal = () => {
               />
             )}
 
-            {/* danh sách user đã chọn */}
             <SelectedUsersList
               invitedUsers={invitedUsers}
               onRemove={handleRemoveFriend}
             />
-          </div>
+          </div> */}
+
+          <FriendInvitePicker
+            friends={friends}
+            selectedUsers={invitedUsers}
+            onSelect={handleSelectFriend}
+            onRemove={handleRemoveFriend}
+          />
+
           <DialogFooter>
             <Button
               type="submit"

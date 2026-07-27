@@ -12,10 +12,11 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import InviteSuggestionList from "../newGroupChat/InviteSuggestionList";
-import SelectedUsersList from "../newGroupChat/SelectedUsersList";
+// import { Input } from "../ui/input";
+// import { Label } from "../ui/label";
+// import InviteSuggestionList from "../newGroupChat/InviteSuggestionList";
+// import SelectedUsersList from "../newGroupChat/SelectedUsersList";
+import FriendInvitePicker from "../newGroupChat/FriendInvitePicker";
 
 interface AddGroupMembersModalProps {
   open: boolean;
@@ -31,7 +32,7 @@ const AddGroupMembersModal = ({
   const { friends, getFriends, loading: friendsLoading } = useFriendStore();
   const { addGroupMembers, loading: chatLoading } = useChatStore();
 
-  const [search, setSearch] = useState("");
+  // const [search, setSearch] = useState("");
   const [selectedUsers, setSelectedUsers] = useState<Friend[]>([]);
 
   const existingMemberIds = conversation.participants.map(
@@ -45,21 +46,21 @@ const AddGroupMembersModal = ({
 
   useEffect(() => {
     if (!open) {
-      setSearch("");
+      // setSearch("");
       setSelectedUsers([]);
     }
   }, [open]);
 
-  const filteredFriends = friends.filter(
-    (friend) =>
-      !existingMemberIds.includes(friend._id) &&
-      !selectedUsers.some((user) => user._id === friend._id) &&
-      friend.displayName.toLowerCase().includes(search.toLowerCase()),
-  );
+  // const filteredFriends = friends.filter(
+  //   (friend) =>
+  //     !existingMemberIds.includes(friend._id) &&
+  //     !selectedUsers.some((user) => user._id === friend._id) &&
+  //     friend.displayName.toLowerCase().includes(search.toLowerCase()),
+  // );
 
   const handleSelectFriend = (friend: Friend) => {
     setSelectedUsers((prev) => [...prev, friend]);
-    setSearch("");
+    // setSearch("");
   };
 
   const handleRemoveFriend = (friend: Friend) => {
@@ -88,13 +89,35 @@ const AddGroupMembersModal = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-106.25 border-none">
+      <DialogContent className="sm:max-w-106.25 border-none max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="capitalize">
             Thêm thành viên vào nhóm
           </DialogTitle>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
+          <FriendInvitePicker
+            label="Tìm bạn bè"
+            friends={friends}
+            selectedUsers={selectedUsers}
+            excludeIds={existingMemberIds}
+            onSelect={handleSelectFriend}
+            onRemove={handleRemoveFriend}
+          />
+
+          <DialogFooter>
+            <Button
+              type="submit"
+              disabled={chatLoading || friendsLoading}
+              className="flex-1 bg-gradient-chat text-white hover:opacity-90 transition-smooth"
+            >
+              {chatLoading || friendsLoading
+                ? "Đang xử lý ..."
+                : "Thêm thành viên"}
+            </Button>
+          </DialogFooter>
+        </form>
+        {/* <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">
             <Label htmlFor="invite" className="text-sm font-semibold">
               Tìm bạn bè
@@ -131,7 +154,7 @@ const AddGroupMembersModal = ({
                 : "Thêm thành viên"}
             </Button>
           </DialogFooter>
-        </form>
+        </form> */}
       </DialogContent>
     </Dialog>
   );

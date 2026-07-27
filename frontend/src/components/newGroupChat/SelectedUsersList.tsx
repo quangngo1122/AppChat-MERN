@@ -15,7 +15,7 @@ const SelectedUsersList = ({
     return;
   }
   return (
-    <div className="flex flex-wrap gap-2 pt-2">
+    <div className="flex flex-wrap gap-2 pt-2 max-h-28 overflow-y-auto overscroll-contain">
       {invitedUsers.map((user) => (
         <div
           key={user._id}

@@ -14,7 +14,7 @@ const InviteSuggestionList = ({
     return;
   }
   return (
-    <div className="border rounded-lg mt-2 max-h-45 overflow-y-auto divide-y">
+    <div className="border rounded-lg mt-2 max-h-48 overflow-y-auto overscroll-contain divide-y">
       {filteredFriends.map((friend) => (
         <div
           key={friend._id}
